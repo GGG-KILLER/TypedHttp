@@ -1,0 +1,56 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+name: Release Please and Publish
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4.4.0
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      # The logic below handles the NuGet publication:
+      - uses: actions/checkout@v6.0.2
+        # these if statements ensure that a publication only occurs when
+        # a new release is created:
+        if: ${{ steps.release.outputs.release_created }}
+      - uses: actions/setup-dotnet@v5.1.0
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Package Libraries
+        run: |
+          dotnet pack src/xhttp/ \
+            --configuration Release \
+            --output ./packages \
+            --include-symbols
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Get a short-lived NuGet API key
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Publish Packages to NuGet
+        run: |
+          dotnet nuget push ./packages/*.nupkg \
+            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Upload Release Artifacts
+        run: gh release upload ${{ steps.release.outputs.tag_name }} ./artifact/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ steps.release.outputs.release_created }}

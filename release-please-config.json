@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-component-in-tag": false,
+  "include-v-in-tag": false,
+  "draft-pull-request": true,
+  "packages": {
+    "src/xhttp": {
+      "package-name": "xhttp",
+      "extra-files": [
+        {
+          "type": "xml",
+          "path": "src/xhttp/xhttp.csproj",
+          "xpath": "//Project/PropertyGroup/Version"
+        }
+      ]
+    }
+  },
+  "plugins": [
+    "sentence-case"
+  ]
+}
