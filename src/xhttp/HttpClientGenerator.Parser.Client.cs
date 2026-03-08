@@ -25,7 +25,7 @@ public partial class HttpClientGenerator
             foreach (var method in typeSymbol.GetMembers()
                                              .OfType<IMethodSymbol>())
             {
-                var request = TryParseRequest(method, _cancellationToken);
+                var request = TryParseRequest(method);
                 if (request is not null) requests.Add(request);
             }
 
@@ -112,7 +112,7 @@ public partial class HttpClientGenerator
                 Debug.Assert(typeSymbol != null);
 
                 var typeName =
-                    typeSymbol.ToDisplayString(
+                    typeSymbol!.ToDisplayString(
                         SymbolDisplayFormat.MinimallyQualifiedFormat);
                 stringBuilder.Append(typeName);
 
@@ -128,7 +128,7 @@ public partial class HttpClientGenerator
 
                 stringBuilder.Append("namespace ");
                 stringBuilder.Append(
-                    typeSymbol.ToDisplayString(
+                    typeSymbol!.ToDisplayString(
                         SymbolDisplayFormat.MinimallyQualifiedFormat));
                 builder.Add(stringBuilder.ToString());
             }

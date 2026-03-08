@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis;
+
 namespace Xhttp.Model;
 
 /// <summary>
@@ -22,9 +24,10 @@ namespace Xhttp.Model;
 /// The method's return type.
 /// </param>
 internal sealed record Request(
-    string                         Name,
-    string                         Method,
-    Template                       Route,
-    ImmutableByValArray<Header>    Headers,
-    ImmutableByValArray<Parameter> Parameters,
-    ReturnType                     ReturnType);
+    string                          Name,
+    string                          Method,
+    Template                        Route,
+    ImmutableByValArray<Header>     Headers,
+    ImmutableByValArray<Parameter>  Parameters,
+    ReturnType                      ReturnType,
+    ImmutableByValArray<Diagnostic> Diagnostics);

@@ -27,7 +27,7 @@ internal readonly struct ImmutableByValDictionary<TKey, TValue>(
 
     /// <inheritdoc />
     public bool TryGetValue(TKey key, out TValue value)
-        => dictionary.TryGetValue(key, out value);
+        => dictionary.TryGetValue(key, out value!);
 
     /// <inheritdoc />
     public TValue this[TKey key] => dictionary[key];

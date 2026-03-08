@@ -23,33 +23,70 @@ public partial class HttpClientGenerator
             if (reqIds.Length != 1) return null;
             var reqId = reqIds[0];
 
-            string httpMethod, route;
+            string   httpMethod;
+            Template route;
 
-            if (reqId.AttributeClass!.MetadataName == MetadataNames.Request)
+            if (SymbolEqualityComparer.Default.Equals(reqId.AttributeClass,
+                    _knownSymbols.Request))
             {
+                // TODO: Validate method.
                 httpMethod = (string)reqId.ConstructorArguments[0].Value!;
-                route      = (string)reqId.ConstructorArguments[1].Value!;
+                route = Template.Parse(
+                    (string)reqId.ConstructorArguments[1].Value!);
             }
             else
             {
-                httpMethod = reqId.AttributeClass.Name;
-                httpMethod =
-                    httpMethod[
-                        ..httpMethod.IndexOf("Attribute",
-                                             StringComparison.Ordinal)];
-                route = (string)reqId.ConstructorArguments[0].Value!;
+                httpMethod = reqId.AttributeClass!.Name;
+                httpMethod = httpMethod.Substring(0,
+                                                  httpMethod.IndexOf(
+                                                      "Attribute",
+                                                      StringComparison
+                                                         .Ordinal));
+                route = Template.Parse(
+                    (string)reqId.ConstructorArguments[0].Value!);
             }
 
             var headers =
                 ParseRequestHeaders(attributes[MetadataNames.Headers]);
 
+            var routeParameters = GetRouterParameters(route);
+            var parameters      = ImmutableArray.CreateBuilder<Parameter>();
+            foreach (var parameter in method.Parameters)
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                parameters.Add(
+                    ParseParameter(routeParameters, headers, parameter));
+            }
+
+            var returnType = ParseReturnType(method);
+
             return new Request(method.ToDisplayString(SymbolDisplayFormat
                                   .MinimallyQualifiedFormat),
                                httpMethod,
-                               Template.Parse(route),
+                               route,
                                headers.DrainToImmutable().ByVal(),
-                               TODO,
-                               TODO);
+                               parameters.DrainToImmutable().ByVal(),
+                               returnType,
+                               ImmutableArray<Diagnostic>.Empty.ByVal());
+        }
+
+        private static ImmutableHashSet<string> GetRouterParameters(
+            Template route)
+        {
+            var builder =
+                ImmutableHashSet.CreateBuilder<string>(StringComparer.Ordinal);
+
+            foreach (var templatePart in route.Parts)
+            {
+                if (templatePart.Kind != TemplatePartKind.Parameter) continue;
+
+                var name = templatePart.Value;
+                if (name.Contains(':'))
+                    name = name.Substring(0, name.IndexOf(':'));
+                builder.Add(name);
+            }
+
+            return builder.ToImmutable();
         }
 
         private ImmutableArray<Header>.Builder ParseRequestHeaders(
@@ -72,6 +109,72 @@ public partial class HttpClientGenerator
             return builder;
         }
 
-        private ReturnType ParseReturnType() { }
+        private ReturnType ParseReturnType(IMethodSymbol method)
+        {
+            ReturnTypeKind returnKind;
+            var            isAsync    = false;
+            var            returnType = method.ReturnType;
+            var returnTypeStr = returnType.ToDisplayString(SymbolDisplayFormat
+               .FullyQualifiedFormat);
+
+            // Check for void return type
+            if (method.ReturnsVoid)
+            {
+                returnKind = ReturnTypeKind.Void;
+                goto end;
+            }
+
+            // Check for non-generic Task return type
+            if (SymbolEqualityComparer.Default.Equals(returnType,
+                    _knownSymbols.TaskVoid))
+            {
+                isAsync    = true;
+                returnKind = ReturnTypeKind.Void;
+                goto end;
+            }
+
+            // Check for Task<T> return type
+            if (returnType is INamedTypeSymbol
+                              {
+                                  TypeParameters.Length: 1
+                              } namedType
+             && SymbolEqualityComparer.Default.Equals(
+                    namedType.ConstructUnboundGenericType(),
+                    _knownSymbols.TaskT))
+            {
+                isAsync = true;
+                // The rest needs the inner type
+                returnType = namedType.TypeParameters[0];
+            }
+
+            // Check for HttpResponseMessage
+            if (SymbolEqualityComparer.Default.Equals(returnType,
+                    _knownSymbols.HttpResponseMessage))
+            {
+                returnKind = ReturnTypeKind.HttpResponseMessage;
+                goto end;
+            }
+
+            // Check for Stream
+            if (SymbolEqualityComparer.Default.Equals(returnType,
+                    _knownSymbols.Stream))
+            {
+                returnKind = ReturnTypeKind.Stream;
+                goto end;
+            }
+
+            // Check for String
+            if (returnType.SpecialType == SpecialType.System_String)
+            {
+                returnKind = ReturnTypeKind.String;
+                goto end;
+            }
+
+            // If everything else fails, it's a type that needs deserializing
+            returnKind = ReturnTypeKind.Custom;
+
+        end:
+            return new ReturnType(returnKind, isAsync, returnTypeStr);
+        }
     }
 }
