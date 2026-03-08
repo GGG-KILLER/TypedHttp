@@ -1,79 +1,102 @@
+using System.Collections.Immutable;
+using System.Text;
+
 namespace Xhttp.Model;
 
 /// <summary>
 /// Represents a template string used for filling in headers and route parts.
 /// </summary>
-/// <param name="Kind">The kind of string it is</param>
-/// <param name="Value">The value of the string</param>
 internal readonly record struct Template(
-    TemplateKind Kind,
-    string       Value)
+    ImmutableByValArray<TemplatePart> Parts)
 {
-    public static Template String(string name)
-        => new(TemplateKind.RawString, name);
+    public static Template String(string value)
+        => new([ new TemplatePart(TemplatePartKind.String, value) ]);
 
     public static Template Parameter(string name)
-        => new(TemplateKind.RawValue, name);
+        => new([ new TemplatePart(TemplatePartKind.Parameter, name) ]);
 
-    public static Template Parse(string input)
+    public static Template Parse(ReadOnlySpan<char> input)
     {
-        // TODO: Implement an actual parser for interpolated strings
-        if (input.Length == 0)
-            return new Template(TemplateKind.RawValue, input);
+        var parts        = ImmutableArray.CreateBuilder<TemplatePart>();
+        var currentKind  = TemplatePartKind.String;
+        var currentValue = new StringBuilder();
 
-        var openingBrace = input.IndexOf('{');
-        var closingBrace = input.IndexOf('}');
-
-        // If we start with { and end with }, without and }s in the middle (the,
-        // index of the first } is the end of the string) we're a raw value.
-        if (input.Length > 2
-         && openingBrace == 0
-         && closingBrace != -1
-         && closingBrace == input.Length - 1)
+        for (var index = 0; index < input.Length; index++)
         {
-            // However, we can have format modifiers, so check for those
-            if (input.IndexOf(':') != -1)
-                return new Template(TemplateKind.Interpolation,
-                                    input);
+            var ch = input[index];
+            switch (currentKind)
+            {
+                // If we're in a string part
+                case TemplatePartKind.String
+                    // and the next character opens an interpolation hole
+                    when ch == '{'
+                         // and it is not escaping the next character by being a
+                         // repeated {
+                      && index            < input.Length - 1
+                      && input[index + 1] != '{':
+                {
+                    // Then we end the current part and swap the interpolation
+                    // kind
 
-            return new Template(TemplateKind.RawValue,
-                                input.Substring(1, input.Length - 2));
+                    if (currentValue.Length > 0)
+                    {
+                        parts.Add(new TemplatePart(TemplatePartKind.Parameter,
+                                                   currentValue.ToString()));
+                    }
+
+                    currentKind = ~currentKind;
+                    currentValue.Clear();
+                    break;
+                }
+                // Same logic as above but simpler since we don't accept any
+                // escapes for parameter holes.
+                case TemplatePartKind.Parameter
+                    when ch == '}':
+                    parts.Add(new TemplatePart(TemplatePartKind.Parameter,
+                                               currentValue.ToString()));
+
+                    currentKind = ~currentKind;
+                    currentValue.Clear();
+                    break;
+                // Otherwise just append to the current part contents.
+                default: currentValue.Append(ch); break;
+            }
         }
 
-        // If we have an opening brace and a closing brace that closes the
-        // opening
-        // one, then we're an interpolated string as we have string parts and
-        // value parts
-        if (openingBrace != -1
-         && closingBrace != -1
-         && openingBrace > closingBrace)
+        // Submit the last part at the end of the input.
+        if (currentValue.Length > 0)
         {
-            return new Template(TemplateKind.Interpolation,
-                                input);
+            parts.Add(new TemplatePart(currentKind,
+                                       currentValue.ToString()));
         }
 
-        // If we don't have any interpolation holes, it's a raw string.
-        return new Template(TemplateKind.RawString, input);
+        return new Template(
+            new ImmutableByValArray<TemplatePart>(parts.DrainToImmutable()));
     }
 }
 
 /// <summary>
+/// Represents a part of a template string.
+/// </summary>
+/// <param name="Kind">The kind of part this template part is.</param>
+/// <param name="Value">The raw value of this template part.</param>
+internal readonly record struct TemplatePart(
+    TemplatePartKind Kind,
+    string           Value);
+
+/// <summary>
 /// Defines what type of <see cref="Template"/> an instance is.
 /// </summary>
-internal enum TemplateKind
+internal enum TemplatePartKind
 {
     /// <summary>
-    /// Raw string with no values injected inside.
+    /// Plain string, needs to be escaped before being inserted into a C# string
+    /// literal.
     /// </summary>
-    RawString,
+    String = 1,
 
     /// <summary>
-    /// Contains only a single value, no prefix or suffix.
+    /// A parameter that will be interpolated into the string.
     /// </summary>
-    RawValue,
-
-    /// <summary>
-    /// Has either multiple values or a mix of string parts and value parts.
-    /// </summary>
-    Interpolation,
+    Parameter = ~String,
 }

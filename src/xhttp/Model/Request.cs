@@ -3,38 +3,28 @@ namespace Xhttp.Model;
 /// <summary>
 /// Represents an entire endpoint method.
 /// </summary>
-/// <param name="ContainingStructures">
-/// The structures (namespace, class(es), struct(s)) that this request method is
-/// contained within.
+/// <param name="Name">
+/// The name (including type parameters) of the method that will execute the request.
+/// </param>
+/// <param name="Method">
+/// The HTTP method to use when calling the endpoint.
 /// </param>
 /// <param name="Route">
-/// The template for the route that will be sent on the request.
-/// </param>
-/// <param name="Aliases">
-/// Alias name to parameter name lookup table.
-/// </param>
-/// <param name="Properties">
-/// Properties to be added to <see cref="HttpRequestMessage.Properties"/>.
+/// The template for endpoint path.
 /// </param>
 /// <param name="Headers">
 /// Headers to be added to <see cref="HttpRequestMessage.Headers"/>
 /// </param>
-/// <param name="Body">
-/// The body to be sent together with the request.
+/// <param name="Parameters">
+/// The method's parameters.
 /// </param>
-/// <param name="ExpectedResponse">
-/// The expected response from the method's signature.
+/// <param name="ReturnType">
+/// The method's return type.
 /// </param>
 internal sealed record Request(
-    ImmutableByValArray<ContainingStructure> ContainingStructures,
-    string                                   Method,
-    Template                                 Route,
-    ImmutableByValDictionary<string, string> Aliases,
-    ImmutableByValArray<Property>            Properties,
-    ImmutableByValArray<Header>              Headers,
-    Body?                                    Body,
-    ExpectedResponse                         ExpectedResponse);
-
-internal readonly struct Property(string Key, string Value);
-
-internal readonly struct Header(Template Name, Template Value);
+    string                         Name,
+    string                         Method,
+    Template                       Route,
+    ImmutableByValArray<Header>    Headers,
+    ImmutableByValArray<Parameter> Parameters,
+    ReturnType                     ReturnType);

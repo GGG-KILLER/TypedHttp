@@ -75,3 +75,10 @@ internal readonly struct ImmutableByValDictionary<TKey, TValue>(
         return hash.ToHashCode();
     }
 }
+
+internal static class ImmutableDictionaryExtensions
+{
+    public static ImmutableByValDictionary<TKey, TValue> ByVal<TKey, TValue>(
+        this ImmutableDictionary<TKey, TValue> array) where TKey : notnull
+        => new(array);
+}

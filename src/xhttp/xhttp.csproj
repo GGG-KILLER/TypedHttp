@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AnalysisLevel>latest</AnalysisLevel>
+        <RootNamespace>Xhttp</RootNamespace>
 
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
@@ -48,8 +49,9 @@
 
     <ItemGroup>
         <Compile Remove="Resources/**" />
-        <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs" />
+        <EmbeddedResource Include="Resources/ClientAttributes.cs" Visible="true" LogicalName="ClientAttributes.cs" />
         <EmbeddedResource Include="Resources/RequestAttributes.cs" Visible="true" LogicalName="RequestAttributes.cs" />
+        <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs" />
     </ItemGroup>
 
     <ItemGroup>

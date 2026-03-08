@@ -2,7 +2,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using Xhttp.Model;
 
-namespace xhttp;
+namespace Xhttp;
 
 internal sealed class RequestWriter(IndentedTextWriter writer)
 {

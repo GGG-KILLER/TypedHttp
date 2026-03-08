@@ -1,11 +1,20 @@
 namespace Xhttp.Model;
 
-internal sealed record ExpectedResponse(ResponseType Type, string? TypeName);
+/// <summary>
+/// Represents a <see cref="Request"/>'s return type.
+/// </summary>
+/// <param name="Kind">The kind of return type this is.</param>
+/// <param name="Async">Whether this return type is async.</param>
+/// <param name="Type">The return type's fully qualified name.</param>
+internal sealed record ReturnType(
+    ReturnTypeKind Kind,
+    bool           Async,
+    string         Type);
 
 /// <summary>
 /// The kind of response that the user expects to receive from a request method.
 /// </summary>
-internal enum ResponseType
+internal enum ReturnTypeKind
 {
     /// <summary>
     /// The raw response, user handles everything including status code checks

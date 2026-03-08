@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xhttp.Model;
 
-namespace xhttp.Readers;
+namespace Xhttp.Readers;
 
 internal readonly struct ParameterReader(
     ImmutableDictionary<string, string>.Builder aliases,

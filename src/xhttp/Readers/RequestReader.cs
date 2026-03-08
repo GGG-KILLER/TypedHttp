@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Xhttp.Model;
 
-namespace xhttp.Readers;
+namespace Xhttp.Readers;
 
 internal static class RequestReader
 {
@@ -95,7 +95,7 @@ internal static class RequestReader
             builder.ToImmutable());
     }
 
-    private static ExpectedResponse ExtractExpectedResponse(
+    private static ReturnType ExtractExpectedResponse(
         IMethodSymbol     method,
         CancellationToken cancellationToken)
     {

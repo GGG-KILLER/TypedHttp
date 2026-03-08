@@ -1,8 +1,17 @@
 using System.Collections;
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 namespace Xhttp.Model;
 
+internal static class ImmutableByValArray
+{
+    public static ImmutableByValArray<T> Create<T>(ReadOnlySpan<T> values)
+        => new([ ..values ]);
+}
+
+[CollectionBuilder(typeof(ImmutableByValArray),
+                   nameof(ImmutableByValArray.Create))]
 internal readonly struct ImmutableByValArray<T>(ImmutableArray<T> array)
     : IReadOnlyList<T>, IEquatable<ImmutableByValArray<T>>
 {
@@ -45,4 +54,10 @@ internal readonly struct ImmutableByValArray<T>(ImmutableArray<T> array)
 
         return hash.ToHashCode();
     }
+}
+
+internal static class ImmutableArrayExtensions
+{
+    public static ImmutableByValArray<T> ByVal<T>(this ImmutableArray<T> array)
+        => new(array);
 }
