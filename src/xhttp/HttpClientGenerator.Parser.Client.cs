@@ -153,11 +153,17 @@ public partial class HttpClientGenerator
                         _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
-                stringBuilder.Append("namespace ");
-                stringBuilder.Append(
-                    typeSymbol!.ToDisplayString(
-                        SymbolDisplayFormat.MinimallyQualifiedFormat));
-                builder.Add(stringBuilder.ToString());
+                if (typeSymbol?.ContainingNamespace is not null)
+                {
+                    stringBuilder.Append("namespace ");
+                    stringBuilder.Append(
+                        typeSymbol.ContainingNamespace!.ToDisplayString(
+                            SymbolDisplayFormat.FullyQualifiedFormat
+                                               .WithGlobalNamespaceStyle(
+                                                    SymbolDisplayGlobalNamespaceStyle
+                                                       .Omitted)));
+                    builder.Add(stringBuilder.ToString());
+                }
             }
 
             builder.Reverse();

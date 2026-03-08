@@ -30,8 +30,7 @@ public partial class HttpClientGenerator : IIncrementalGenerator
 
         var clients = context.SyntaxProvider.ForAttributeWithMetadataName(
             MetadataNames.Client,
-            static (node, _) => node.IsKind(SyntaxKind.ClassDeclaration)
-                             || node.IsKind(SyntaxKind.StructDeclaration),
+            static (node, _) => node.IsKind(SyntaxKind.InterfaceDeclaration),
             static (ctx, cancellationToken) =>
             {
                 var parser = new Parser(ctx.SemanticModel, cancellationToken);
@@ -60,5 +59,14 @@ public partial class HttpClientGenerator : IIncrementalGenerator
         // ReSharper disable once ReplaceWithPrimaryConstructorParameter
         private readonly CancellationToken _cancellationToken =
             cancellationToken;
+
+        /// <summary>
+        /// Parses a client from a <see cref="SyntaxValueProvider.ForAttributeWithMetadataName{T}"/>
+        /// callback.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public partial Client ParseClient(
+            GeneratorAttributeSyntaxContext context);
     }
 }
