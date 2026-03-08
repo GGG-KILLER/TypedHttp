@@ -1,9 +1,11 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Xhttp.Sample;
 
-public partial class HelloWorldClient
+[Client]
+public interface IHelloWorldClient
 {
-    [Get("/hello-world")]
-    public partial Task<string> Hello([Authorize] string token, string name);
+    [Get("hello-world")]
+    public Task<string> Hello([Authorize] string token, string name);
 }
