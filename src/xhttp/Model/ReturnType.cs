@@ -6,10 +6,14 @@ namespace Xhttp.Model;
 /// <param name="Kind">The kind of return type this is.</param>
 /// <param name="Async">Whether this return type is async.</param>
 /// <param name="Type">The return type's fully qualified name.</param>
+/// <param name="InnerType">
+/// The inner (T in Task&lt;T&gt;) return type's fully qualified name.
+/// </param>
 internal sealed record ReturnType(
     ReturnTypeKind Kind,
     bool           Async,
-    string         Type);
+    string         Type,
+    string?        InnerType);
 
 /// <summary>
 /// The kind of response that the user expects to receive from a request method.

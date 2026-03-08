@@ -112,8 +112,9 @@ public partial class HttpClientGenerator
         private ReturnType ParseReturnType(IMethodSymbol method)
         {
             ReturnTypeKind returnKind;
-            var            isAsync    = false;
-            var            returnType = method.ReturnType;
+            string?        innerTypeStr = null;
+            var            isAsync      = false;
+            var            returnType   = method.ReturnType;
             var returnTypeStr = returnType.ToDisplayString(SymbolDisplayFormat
                .FullyQualifiedFormat);
 
@@ -145,6 +146,8 @@ public partial class HttpClientGenerator
                 isAsync = true;
                 // The rest needs the inner type
                 returnType = namedType.TypeParameters[0];
+                innerTypeStr = returnType.ToDisplayString(
+                    SymbolDisplayFormat.FullyQualifiedFormat);
             }
 
             // Check for HttpResponseMessage
@@ -174,7 +177,10 @@ public partial class HttpClientGenerator
             returnKind = ReturnTypeKind.Custom;
 
         end:
-            return new ReturnType(returnKind, isAsync, returnTypeStr);
+            return new ReturnType(returnKind,
+                                  isAsync,
+                                  returnTypeStr,
+                                  innerTypeStr);
         }
     }
 }

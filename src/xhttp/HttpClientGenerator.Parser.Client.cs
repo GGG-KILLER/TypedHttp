@@ -12,11 +12,13 @@ public partial class HttpClientGenerator
 {
     private sealed partial class Parser
     {
-        public Client ParseClient(GeneratorAttributeSyntaxContext context)
+        public partial Client ParseClient(
+            GeneratorAttributeSyntaxContext context)
         {
             var scopes =
-                ParseContainingScopes(
-                    (TypeDeclarationSyntax)context.TargetNode);
+                ParseContainingScopes((TypeDeclarationSyntax)context.TargetNode,
+                                      out var interfaceModifiers,
+                                      out var interfaceName);
 
             var headers = ParseHeaders(context.TargetSymbol);
 
@@ -30,6 +32,8 @@ public partial class HttpClientGenerator
             }
 
             return new Client(scopes,
+                              interfaceModifiers,
+                              interfaceName,
                               headers,
                               requests.DrainToImmutable().ByVal(),
                               _diagnostics.DrainToImmutable().ByVal());
@@ -69,19 +73,39 @@ public partial class HttpClientGenerator
         /// Extracts the namespace, containing types and the client itself.
         /// </summary>
         /// <param name="clientDeclarationSyntax"></param>
+        /// <param name="modifiers"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         private ImmutableByValArray<string> ParseContainingScopes(
-            TypeDeclarationSyntax clientDeclarationSyntax)
+            TypeDeclarationSyntax clientDeclarationSyntax,
+            out string            modifiers,
+            out string            name)
         {
             var stringBuilder = new StringBuilder();
             var builder       = ImmutableArray.CreateBuilder<string>();
 
-            // Client and containing types
-            for (TypeDeclarationSyntax? currentType = clientDeclarationSyntax;
+            // Client interface
+            {
+                modifiers = string.Join(" ",
+                                        clientDeclarationSyntax.Modifiers
+                                           .Select(x => x.Text));
+
+                var typeSymbol =
+                    _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax,
+                        _cancellationToken);
+                Debug.Assert(typeSymbol != null);
+
+                name = typeSymbol!.ToDisplayString(
+                    SymbolDisplayFormat.MinimallyQualifiedFormat);
+            }
+
+            // Containing types
+            for (var currentType =
+                     clientDeclarationSyntax.Parent as TypeDeclarationSyntax;
                  currentType != null;
                  currentType = currentType.Parent as TypeDeclarationSyntax)
             {
-                // bool          isPartialType = false;
+                // bool isPartialType = false;
                 stringBuilder.Clear();
 
                 foreach (SyntaxToken modifier in currentType.Modifiers)
@@ -92,6 +116,7 @@ public partial class HttpClientGenerator
                     // modifier.IsKind(SyntaxKind.PartialKeyword);
                 }
 
+                // TODO: Not partial diagnostic
                 // if (!isPartialType)
                 // {
                 //     typeDeclarations = null;
@@ -103,6 +128,8 @@ public partial class HttpClientGenerator
                                          SyntaxKind.ClassDeclaration => "class",
                                          SyntaxKind.StructDeclaration =>
                                              "struct",
+                                         _ => throw new Exception(
+                                                  "Unreachable.")
                                      });
                 stringBuilder.Append(' ');
 

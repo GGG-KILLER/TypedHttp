@@ -18,7 +18,9 @@ namespace Xhttp.Model;
 /// Client diagnostics (errors and warnings).
 /// </param>
 internal sealed record Client(
-    ImmutableByValArray<string>  Containers,
-    ImmutableByValArray<Header>  Headers,
-    ImmutableByValArray<Request> Requests,
+    ImmutableByValArray<string>     Containers,
+    string                          Modifiers,
+    string                          Name,
+    ImmutableByValArray<Header>     Headers,
+    ImmutableByValArray<Request>    Requests,
     ImmutableByValArray<Diagnostic> Diagnostics);

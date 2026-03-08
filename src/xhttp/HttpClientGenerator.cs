@@ -17,7 +17,7 @@ public partial class HttpClientGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput(postCtx =>
+        context.RegisterPostInitializationOutput(static postCtx =>
         {
             postCtx.AddEmbeddedAttributeDefinition();
             postCtx.AddSource("ClientAttributes.cs",
@@ -30,9 +30,9 @@ public partial class HttpClientGenerator : IIncrementalGenerator
 
         var clients = context.SyntaxProvider.ForAttributeWithMetadataName(
             MetadataNames.Client,
-            (node, _) => node.IsKind(SyntaxKind.ClassDeclaration)
-                      || node.IsKind(SyntaxKind.StructDeclaration),
-            (ctx, cancellationToken) =>
+            static (node, _) => node.IsKind(SyntaxKind.ClassDeclaration)
+                             || node.IsKind(SyntaxKind.StructDeclaration),
+            static (ctx, cancellationToken) =>
             {
                 var parser = new Parser(ctx.SemanticModel, cancellationToken);
                 return parser.ParseClient(ctx);

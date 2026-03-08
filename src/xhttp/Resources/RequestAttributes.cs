@@ -142,7 +142,9 @@ internal sealed class RequestAttribute(string method, string route) : Attribute;
 /// will be trimmed before being added (<code>HEADER:VALUE</code> is equivalent
 /// to <code>HEADER : VALUE</code>).
 /// </param>
-[Embedded, AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+[Embedded,
+ AttributeUsage(AttributeTargets.Interface | AttributeTargets.Method,
+                AllowMultiple = true)]
 internal sealed class HeadersAttribute(params string[] headers) : Attribute;
 
 /// <summary>

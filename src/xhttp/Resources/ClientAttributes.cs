@@ -9,6 +9,6 @@ namespace Xhttp;
 /// </summary>
 [Embedded,
  AttributeUsage(
-     AttributeTargets.Class | AttributeTargets.Struct,
+     AttributeTargets.Interface,
      Inherited = false)]
 internal sealed class ClientAttribute : Attribute;
