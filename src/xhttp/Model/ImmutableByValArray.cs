@@ -30,6 +30,9 @@ internal readonly struct ImmutableByValArray<T>(ImmutableArray<T> array)
     IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable)_array).GetEnumerator();
 
+    /// <inheritdoc cref="ImmutableArray{T}.Length" />
+    public int Length => _array.Length;
+
     /// <inheritdoc />
     public int Count => ((IReadOnlyCollection<T>)_array).Count;
 
@@ -54,6 +57,9 @@ internal readonly struct ImmutableByValArray<T>(ImmutableArray<T> array)
 
         return hash.ToHashCode();
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"[{string.Join(", ", _array)}]";
 }
 
 internal static class ImmutableArrayExtensions
