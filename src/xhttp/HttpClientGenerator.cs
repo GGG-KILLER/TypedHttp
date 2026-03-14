@@ -49,6 +49,15 @@ public partial class HttpClientGenerator : IIncrementalGenerator
         SemanticModel     semanticModel,
         CancellationToken cancellationToken = default)
     {
+        private static readonly SymbolDisplayFormat s_fullTypeFormat = new(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
+                                | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier
+                                | SymbolDisplayMiscellaneousOptions.UseErrorTypeSymbolName
+                                | SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
         // ReSharper disable once ReplaceWithPrimaryConstructorParameter
         private readonly SemanticModel _semanticModel = semanticModel;
         private readonly KnownSymbols  _knownSymbols  = new(semanticModel);

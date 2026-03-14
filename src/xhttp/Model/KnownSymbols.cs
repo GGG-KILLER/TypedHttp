@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
 namespace Xhttp.Model;
@@ -27,26 +28,53 @@ internal sealed class KnownSymbols(SemanticModel semanticModel)
     public INamedTypeSymbol TaskT
         => field ??= GetTypeByMetadataName("System.Threading.Tasks.Task`1");
 
+    public INamedTypeSymbol Head
+        => field ??= GetTypeByMetadataName("Xhttp.HeadAttribute");
+
+    public INamedTypeSymbol Get
+        => field ??= GetTypeByMetadataName("Xhttp.GetAttribute");
+
+    public INamedTypeSymbol Post
+        => field ??= GetTypeByMetadataName("Xhttp.PostAttribute");
+
+    public INamedTypeSymbol Put
+        => field ??= GetTypeByMetadataName("Xhttp.PutAttribute");
+
+    public INamedTypeSymbol Patch
+        => field ??= GetTypeByMetadataName("Xhttp.PatchAttribute");
+
+    public INamedTypeSymbol Delete
+        => field ??= GetTypeByMetadataName("Xhttp.DeleteAttribute");
+
+    public INamedTypeSymbol Options
+        => field ??= GetTypeByMetadataName("Xhttp.OptionsAttribute");
+
     public INamedTypeSymbol Request
-        => field ??= GetTypeByMetadataName(MetadataNames.Request);
+        => field ??= GetTypeByMetadataName("Xhttp.RequestAttribute");
+
+    public ImmutableHashSet<INamedTypeSymbol> RequestMarkers
+        => field ??=
+               ImmutableHashSet.CreateRange<INamedTypeSymbol>(
+                   SymbolEqualityComparer.Default,
+                   [ Head, Get, Post, Put, Patch, Delete, Options, Request, ]);
 
     public INamedTypeSymbol Headers
-        => field ??= GetTypeByMetadataName(MetadataNames.Headers);
+        => field ??= GetTypeByMetadataName("Xhttp.HeadersAttribute");
 
     public INamedTypeSymbol Alias
-        => field ??= GetTypeByMetadataName(MetadataNames.Alias);
+        => field ??= GetTypeByMetadataName("Xhttp.AliasAsAttribute");
 
     public INamedTypeSymbol Body
-        => field ??= GetTypeByMetadataName(MetadataNames.Body);
+        => field ??= GetTypeByMetadataName("Xhttp.BodyAttribute");
 
     public INamedTypeSymbol Header
-        => field ??= GetTypeByMetadataName(MetadataNames.Header);
+        => field ??= GetTypeByMetadataName("Xhttp.HeaderAttribute");
 
     public INamedTypeSymbol Property
-        => field ??= GetTypeByMetadataName(MetadataNames.Property);
+        => field ??= GetTypeByMetadataName("Xhttp.PropertyAttribute");
 
     public INamedTypeSymbol Authorize
-        => field ??= GetTypeByMetadataName(MetadataNames.Authorize);
+        => field ??= GetTypeByMetadataName("Xhttp.AuthorizeAttribute");
 
     private INamedTypeSymbol GetTypeByMetadataName(string name)
         => semanticModel.Compilation.GetTypeByMetadataName(name)!

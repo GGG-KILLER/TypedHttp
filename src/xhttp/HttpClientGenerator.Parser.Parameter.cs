@@ -99,8 +99,7 @@ public partial class HttpClientGenerator
             }
 
             return new Parameter(
-                parameter.Type.ToDisplayString(
-                    SymbolDisplayFormat.FullyQualifiedFormat),
+                parameter.Type.ToDisplayString(s_fullTypeFormat),
                 parameter.Name,
                 parameterKind,
                 propertyName,

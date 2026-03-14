@@ -12,8 +12,7 @@ public partial class HttpClientGenerator
 {
     private sealed partial class Parser
     {
-        public partial Client ParseClient(
-            GeneratorAttributeSyntaxContext context)
+        public partial Client ParseClient(GeneratorAttributeSyntaxContext context)
         {
             var scopes =
                 ParseContainingScopes((TypeDeclarationSyntax)context.TargetNode,
@@ -51,9 +50,8 @@ public partial class HttpClientGenerator
                 _cancellationToken.ThrowIfCancellationRequested();
 
                 // Ignore attributes which aren't [Headers]
-                if (!SymbolEqualityComparer.Default.Equals(
-                        attribute.AttributeClass,
-                        _knownSymbols.Headers))
+                if (!SymbolEqualityComparer.Default.Equals(attribute.AttributeClass,
+                                                           _knownSymbols.Headers))
                     continue;
 
                 foreach (var header in attribute.ConstructorArguments)
@@ -88,15 +86,14 @@ public partial class HttpClientGenerator
             {
                 modifiers = string.Join(" ",
                                         clientDeclarationSyntax.Modifiers
-                                           .Select(x => x.Text));
+                                                               .Select(x => x.Text));
 
                 var typeSymbol =
                     _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax,
-                        _cancellationToken);
+                                                     _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
-                name = typeSymbol!.ToDisplayString(
-                    SymbolDisplayFormat.MinimallyQualifiedFormat);
+                name = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
             }
 
             // Containing types
@@ -128,19 +125,17 @@ public partial class HttpClientGenerator
                                          SyntaxKind.ClassDeclaration => "class",
                                          SyntaxKind.StructDeclaration =>
                                              "struct",
-                                         _ => throw new Exception(
-                                                  "Unreachable.")
+                                         _ => throw new Exception("Unreachable.")
                                      });
                 stringBuilder.Append(' ');
 
                 var typeSymbol =
                     _semanticModel.GetDeclaredSymbol(currentType,
-                        _cancellationToken);
+                                                     _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
                 var typeName =
-                    typeSymbol!.ToDisplayString(
-                        SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                 stringBuilder.Append(typeName);
 
                 builder.Add(stringBuilder.ToString());
@@ -150,18 +145,15 @@ public partial class HttpClientGenerator
             {
                 var typeSymbol =
                     _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax,
-                        _cancellationToken);
+                                                     _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
                 if (typeSymbol?.ContainingNamespace is not null)
                 {
                     stringBuilder.Append("namespace ");
-                    stringBuilder.Append(
-                        typeSymbol.ContainingNamespace!.ToDisplayString(
-                            SymbolDisplayFormat.FullyQualifiedFormat
-                                               .WithGlobalNamespaceStyle(
-                                                    SymbolDisplayGlobalNamespaceStyle
-                                                       .Omitted)));
+                    stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(s_fullTypeFormat
+                                            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle
+                                                                         .Omitted)));
                     builder.Add(stringBuilder.ToString());
                 }
             }

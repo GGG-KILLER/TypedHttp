@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Xhttp.Model;
 
 namespace Xhttp;
@@ -11,57 +12,54 @@ public partial class HttpClientGenerator
         public Request? TryParseRequest(IMethodSymbol method)
         {
             var attributes = method.GetAttributes()
-                                   .ToLookup(attr => attr.AttributeClass!
-                                                .MetadataName);
+                                   .ToLookup(attr => attr.AttributeClass!,
+                                             SymbolEqualityComparer.Default);
 
             var reqIds =
                 attributes
-                   .Where(x => MetadataNames.RequestIdentifiers
-                                            .Contains(x.Key!))
+#pragma warning disable RS1024
+                    // The ImmutableHashSet<T> already uses the comparer
+                   .Where(x => _knownSymbols.RequestMarkers.Contains(x.Key!))
+#pragma warning restore RS1024
                    .SelectMany(x => x)
                    .ToImmutableArray();
-            if (reqIds.Length != 1) return null;
+            if (reqIds.Length != 1) return null; // TODO: Diagnostic about multiple markers
             var reqId = reqIds[0];
 
             string   httpMethod;
             Template route;
 
             if (SymbolEqualityComparer.Default.Equals(reqId.AttributeClass,
-                    _knownSymbols.Request))
+                                                      _knownSymbols.Request))
             {
                 // TODO: Validate method.
                 httpMethod = (string)reqId.ConstructorArguments[0].Value!;
-                route = Template.Parse(
-                    (string)reqId.ConstructorArguments[1].Value!);
+                route      = Template.Parse((string)reqId.ConstructorArguments[1].Value!);
             }
             else
             {
                 httpMethod = reqId.AttributeClass!.Name;
                 httpMethod = httpMethod.Substring(0,
-                                                  httpMethod.IndexOf(
-                                                      "Attribute",
-                                                      StringComparison
-                                                         .Ordinal));
-                route = Template.Parse(
-                    (string)reqId.ConstructorArguments[0].Value!);
+                                                  httpMethod.IndexOf("Attribute",
+                                                                     StringComparison
+                                                                        .Ordinal));
+                route = Template.Parse((string)reqId.ConstructorArguments[0].Value!);
             }
 
             var headers =
-                ParseRequestHeaders(attributes[MetadataNames.Headers]);
+                ParseRequestHeaders(attributes[_knownSymbols.Headers]);
 
             var routeParameters = GetRouterParameters(route);
             var parameters      = ImmutableArray.CreateBuilder<Parameter>();
             foreach (var parameter in method.Parameters)
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                parameters.Add(
-                    ParseParameter(routeParameters, headers, parameter));
+                parameters.Add(ParseParameter(routeParameters, headers, parameter));
             }
 
             var returnType = ParseReturnType(method);
 
-            return new Request(method.ToDisplayString(SymbolDisplayFormat
-                                  .MinimallyQualifiedFormat),
+            return new Request(GetMethodName(method),
                                httpMethod,
                                route,
                                headers.DrainToImmutable().ByVal(),
@@ -70,8 +68,12 @@ public partial class HttpClientGenerator
                                ImmutableArray<Diagnostic>.Empty.ByVal());
         }
 
-        private static ImmutableHashSet<string> GetRouterParameters(
-            Template route)
+        private static readonly SymbolDisplayFormat s_methodNameFormat =
+            s_fullTypeFormat!.WithMemberOptions(SymbolDisplayMemberOptions.None);
+
+        private static string GetMethodName(IMethodSymbol method) { return method.ToDisplayString(s_methodNameFormat); }
+
+        private static ImmutableHashSet<string> GetRouterParameters(Template route)
         {
             var builder =
                 ImmutableHashSet.CreateBuilder<string>(StringComparer.Ordinal);
@@ -80,17 +82,15 @@ public partial class HttpClientGenerator
             {
                 if (templatePart.Kind != TemplatePartKind.Parameter) continue;
 
-                var name = templatePart.Value;
-                if (name.Contains(':'))
-                    name = name.Substring(0, name.IndexOf(':'));
+                var name                     = templatePart.Value;
+                if (name.Contains(':')) name = name.Substring(0, name.IndexOf(':'));
                 builder.Add(name);
             }
 
             return builder.ToImmutable();
         }
 
-        private ImmutableArray<Header>.Builder ParseRequestHeaders(
-            IEnumerable<AttributeData> attributes)
+        private ImmutableArray<Header>.Builder ParseRequestHeaders(IEnumerable<AttributeData> attributes)
         {
             var builder =
                 ImmutableArray.CreateBuilder<Header>();
@@ -115,8 +115,7 @@ public partial class HttpClientGenerator
             string?        innerTypeStr = null;
             var            isAsync      = false;
             var            returnType   = method.ReturnType;
-            var returnTypeStr = returnType.ToDisplayString(SymbolDisplayFormat
-               .FullyQualifiedFormat);
+            var returnTypeStr = returnType.ToDisplayString(s_fullTypeFormat);
 
             // Check for void return type
             if (method.ReturnsVoid)
@@ -127,7 +126,7 @@ public partial class HttpClientGenerator
 
             // Check for non-generic Task return type
             if (SymbolEqualityComparer.Default.Equals(returnType,
-                    _knownSymbols.TaskVoid))
+                                                      _knownSymbols.TaskVoid))
             {
                 isAsync    = true;
                 returnKind = ReturnTypeKind.Void;
@@ -135,24 +134,19 @@ public partial class HttpClientGenerator
             }
 
             // Check for Task<T> return type
-            if (returnType is INamedTypeSymbol
-                              {
-                                  TypeParameters.Length: 1
-                              } namedType
-             && SymbolEqualityComparer.Default.Equals(
-                    namedType.ConstructUnboundGenericType(),
-                    _knownSymbols.TaskT))
+            if (returnType is INamedTypeSymbol { TypeParameters.Length: 1 } namedType
+             && SymbolEqualityComparer.Default.Equals(namedType.ConstructUnboundGenericType(),
+                                                      _knownSymbols.TaskT))
             {
                 isAsync = true;
                 // The rest needs the inner type
-                returnType = namedType.TypeParameters[0];
-                innerTypeStr = returnType.ToDisplayString(
-                    SymbolDisplayFormat.FullyQualifiedFormat);
+                returnType   = namedType.TypeParameters[0];
+                innerTypeStr = returnType.ToDisplayString(s_fullTypeFormat);
             }
 
             // Check for HttpResponseMessage
             if (SymbolEqualityComparer.Default.Equals(returnType,
-                    _knownSymbols.HttpResponseMessage))
+                                                      _knownSymbols.HttpResponseMessage))
             {
                 returnKind = ReturnTypeKind.HttpResponseMessage;
                 goto end;
@@ -160,7 +154,7 @@ public partial class HttpClientGenerator
 
             // Check for Stream
             if (SymbolEqualityComparer.Default.Equals(returnType,
-                    _knownSymbols.Stream))
+                                                      _knownSymbols.Stream))
             {
                 returnKind = ReturnTypeKind.Stream;
                 goto end;
