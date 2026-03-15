@@ -43,11 +43,11 @@ public partial class HttpClientGenerator
             var headers = ParseRequestHeaders(attributes[_knownSymbols.Headers]);
 
             var routeParameters = GetRouterParameters(route);
-            var parameters      = ImmutableArray.CreateBuilder<Parameter>();
+            var parameters      = ImmutableDictionary.CreateBuilder<string, Parameter>(StringComparer.Ordinal);
             foreach (var parameter in method.Parameters)
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                parameters.Add(ParseParameter(routeParameters, headers, parameter));
+                parameters.Add(parameter.Name, ParseParameter(routeParameters, headers, parameter));
             }
 
             var returnType = ParseReturnType(method);
@@ -56,7 +56,7 @@ public partial class HttpClientGenerator
                                Method: httpMethod,
                                Route: route,
                                Headers: headers.DrainToImmutable().ByVal(),
-                               Parameters: parameters.DrainToImmutable().ByVal(),
+                               Parameters: parameters.ToImmutable().ByVal(),
                                ReturnType: returnType,
                                Diagnostics: ImmutableArray<Diagnostic>.Empty.ByVal());
         }
@@ -68,18 +68,10 @@ public partial class HttpClientGenerator
 
         private static ImmutableHashSet<string> GetRouterParameters(Template route)
         {
-            var builder = ImmutableHashSet.CreateBuilder<string>(StringComparer.Ordinal);
-
-            foreach (var templatePart in route.Parts)
-            {
-                if (templatePart.Kind != TemplatePartKind.Parameter) continue;
-
-                var name                     = templatePart.Value;
-                if (name.Contains(':')) name = name.Substring(0, name.IndexOf(':'));
-                builder.Add(name);
-            }
-
-            return builder.ToImmutable();
+            return route.Parts
+                        .Where(p => p.Kind is TemplatePartKind.Parameter)
+                        .Select(p => p.Value)
+                        .ToImmutableHashSet(StringComparer.Ordinal);
         }
 
         private ImmutableArray<Header>.Builder ParseRequestHeaders(IEnumerable<AttributeData> attributes)

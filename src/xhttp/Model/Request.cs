@@ -24,10 +24,10 @@ namespace Xhttp.Model;
 /// The method's return type.
 /// </param>
 internal sealed record Request(
-    string                          Name,
-    string                          Method,
-    Template                        Route,
-    ImmutableByValArray<Header>     Headers,
-    ImmutableByValArray<Parameter>  Parameters,
-    ReturnType                      ReturnType,
-    ImmutableByValArray<Diagnostic> Diagnostics);
+    string                                      Name,
+    string                                      Method,
+    Template                                    Route,
+    ImmutableByValArray<Header>                 Headers,
+    ImmutableByValDictionary<string, Parameter> Parameters,
+    ReturnType                                  ReturnType,
+    ImmutableByValArray<Diagnostic>             Diagnostics);

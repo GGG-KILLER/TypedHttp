@@ -56,6 +56,7 @@ public partial class HttpClientGenerator
                                                                           .Parameter,
                                                                        parameter.Name)
                                                                ])));
+                    parameterKind = ParameterKind.Ignore;
                 }
 
                 // [Header]
@@ -65,6 +66,7 @@ public partial class HttpClientGenerator
                     var name = (string)attribute.ConstructorArguments[0].Value!;
                     requestHeaders.Add(new Header(Template.String(name),
                                                   Template.Parameter(parameter.Name)));
+                    parameterKind = ParameterKind.Ignore;
                 }
 
                 // [Property] and [Property(str)]
@@ -90,11 +92,13 @@ public partial class HttpClientGenerator
                 }
             }
 
-            return new Parameter(parameter.Type.ToDisplayString(s_fullTypeFormat),
-                                 parameter.Name,
-                                 parameterKind,
-                                 propertyName,
-                                 alias);
+            return new Parameter(IsNullable: parameter.Type.IsReferenceType
+                                          || parameter.Type.SpecialType == SpecialType.System_Nullable_T,
+                                 Type: parameter.Type.ToDisplayString(s_fullTypeFormat),
+                                 Name: parameter.Name,
+                                 Kind: parameterKind,
+                                 PropertyName: propertyName,
+                                 Alias: alias);
         }
 
         private ParameterKind ParseBodyType(ITypeSymbol type)

@@ -1,6 +1,6 @@
 namespace Xhttp.Model;
 
-internal readonly struct Header(Template Name, Template Value)
+internal readonly record struct Header(Template Name, Template Value)
 {
     public static Header Parse(string input)
     {

@@ -20,6 +20,7 @@ namespace Xhttp.Model;
 /// string key).
 /// </param>
 internal readonly record struct Parameter(
+    bool          IsNullable,
     string        Type,
     string        Name,
     ParameterKind Kind,
@@ -34,7 +35,7 @@ internal enum ParameterKind
     StringRoute,
 
     /// <summary>
-    /// Parameter a string to be used in the route.
+    /// Parameter not a string to be used in the route.
     /// </summary>
     NonStringRoute,
 
@@ -79,6 +80,8 @@ internal enum ParameterKind
     /// Parameter is to be used as a JSON-encoded body.
     /// </summary>
     JsonBody,
+
+    Ignore,
 
     /// <summary>
     /// The <see cref="CancellationToken"/> to use for all async operations in
