@@ -6,14 +6,11 @@ namespace Xhttp.Model;
 /// <summary>
 /// Represents a template string used for filling in headers and route parts.
 /// </summary>
-internal readonly record struct Template(
-    ImmutableByValArray<TemplatePart> Parts)
+internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts)
 {
-    public static Template String(string value)
-        => new([ new TemplatePart(TemplatePartKind.String, value) ]);
+    public static Template String(string value) => new([ new TemplatePart(TemplatePartKind.String, value) ]);
 
-    public static Template Parameter(string name)
-        => new([ new TemplatePart(TemplatePartKind.Parameter, name) ]);
+    public static Template Parameter(string name) => new([ new TemplatePart(TemplatePartKind.Parameter, name) ]);
 
     public static Template Parse(ReadOnlySpan<char> input)
     {
@@ -35,14 +32,9 @@ internal readonly record struct Template(
                       && index            < input.Length - 1
                       && input[index + 1] != '{':
                 {
-                    // Then we end the current part and swap the interpolation
-                    // kind
+                    // Then we end the current part and swap the interpolation kind
 
-                    if (currentValue.Length > 0)
-                    {
-                        parts.Add(new TemplatePart(TemplatePartKind.Parameter,
-                                                   currentValue.ToString()));
-                    }
+                    if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
                     currentKind = ~currentKind;
                     currentValue.Clear();
@@ -50,10 +42,8 @@ internal readonly record struct Template(
                 }
                 // Same logic as above but simpler since we don't accept any
                 // escapes for parameter holes.
-                case TemplatePartKind.Parameter
-                    when ch == '}':
-                    parts.Add(new TemplatePart(TemplatePartKind.Parameter,
-                                               currentValue.ToString()));
+                case TemplatePartKind.Parameter when ch == '}':
+                    parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
                     currentKind = ~currentKind;
                     currentValue.Clear();
@@ -64,14 +54,9 @@ internal readonly record struct Template(
         }
 
         // Submit the last part at the end of the input.
-        if (currentValue.Length > 0)
-        {
-            parts.Add(new TemplatePart(currentKind,
-                                       currentValue.ToString()));
-        }
+        if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
-        return new Template(
-            new ImmutableByValArray<TemplatePart>(parts.DrainToImmutable()));
+        return new Template(new ImmutableByValArray<TemplatePart>(parts.DrainToImmutable()));
     }
 }
 
@@ -93,7 +78,7 @@ internal enum TemplatePartKind
     /// Plain string, needs to be escaped before being inserted into a C# string
     /// literal.
     /// </summary>
-    String = 1,
+    String = 0,
 
     /// <summary>
     /// A parameter that will be interpolated into the string.
