@@ -18,3 +18,4 @@ Has the `AliasAs`, `Body`, `Header`, `Property` and `Authorize` attributes for p
 - [ ] Refit [attribute](https://github.com/reactiveui/refit/blob/main/Refit/Attributes.cs) parity.
 - [ ] Per-type generation.
 - [ ] Interface support.
+- [ ] Support for `{**part}` in routes.
