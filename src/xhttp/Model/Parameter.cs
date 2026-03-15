@@ -29,19 +29,34 @@ internal readonly record struct Parameter(
 internal enum ParameterKind
 {
     /// <summary>
-    /// Parameter is to be used in the route.
+    /// Parameter a string to be used in the route.
     /// </summary>
-    Route,
+    StringRoute,
+
+    /// <summary>
+    /// Parameter a string to be used in the route.
+    /// </summary>
+    NonStringRoute,
 
     /// <summary>
     /// Parameter is to be stored as a property.
     /// </summary>
-    Property,
+    StringProperty,
+
+    /// <summary>
+    /// Parameter is to be stored as a property.
+    /// </summary>
+    NonStringProperty,
 
     /// <summary>
     /// Parameter is to be used in the query string.
     /// </summary>
-    Query,
+    StringQuery,
+
+    /// <summary>
+    /// Parameter is to be used in the query string.
+    /// </summary>
+    NonStringQuery,
 
     /// <summary>
     /// Parameter is an <see cref="HttpContent"/> derived type to be used as the

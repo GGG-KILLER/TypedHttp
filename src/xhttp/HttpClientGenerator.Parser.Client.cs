@@ -14,28 +14,26 @@ public partial class HttpClientGenerator
     {
         public partial Client ParseClient(GeneratorAttributeSyntaxContext context)
         {
-            var scopes =
-                ParseContainingScopes((TypeDeclarationSyntax)context.TargetNode,
-                                      out var interfaceModifiers,
-                                      out var interfaceName);
+            var scopes = ParseContainingScopes((TypeDeclarationSyntax)context.TargetNode,
+                                               out var interfaceModifiers,
+                                               out var interfaceName);
 
             var headers = ParseHeaders(context.TargetSymbol);
 
             var requests   = ImmutableArray.CreateBuilder<Request>();
             var typeSymbol = (INamedTypeSymbol)context.TargetSymbol;
-            foreach (var method in typeSymbol.GetMembers()
-                                             .OfType<IMethodSymbol>())
+            foreach (var method in typeSymbol.GetMembers().OfType<IMethodSymbol>())
             {
                 var request = TryParseRequest(method);
                 if (request is not null) requests.Add(request);
             }
 
-            return new Client(scopes,
-                              interfaceModifiers,
-                              interfaceName,
-                              headers,
-                              requests.DrainToImmutable().ByVal(),
-                              _diagnostics.DrainToImmutable().ByVal());
+            return new Client(Containers: scopes,
+                              Modifiers: interfaceModifiers,
+                              Name: interfaceName,
+                              Headers: headers,
+                              Requests: requests.DrainToImmutable().ByVal(),
+                              Diagnostics: _diagnostics.DrainToImmutable().ByVal());
         }
 
         /// <summary>
@@ -50,9 +48,7 @@ public partial class HttpClientGenerator
                 _cancellationToken.ThrowIfCancellationRequested();
 
                 // Ignore attributes which aren't [Headers]
-                if (!SymbolEqualityComparer.Default.Equals(attribute.AttributeClass,
-                                                           _knownSymbols.Headers))
-                    continue;
+                if (!SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _knownSymbols.Headers)) continue;
 
                 foreach (var header in attribute.ConstructorArguments)
                 {
@@ -84,21 +80,16 @@ public partial class HttpClientGenerator
 
             // Client interface
             {
-                modifiers = string.Join(" ",
-                                        clientDeclarationSyntax.Modifiers
-                                                               .Select(x => x.Text));
+                modifiers = string.Join(" ", clientDeclarationSyntax.Modifiers.Select(x => x.Text));
 
-                var typeSymbol =
-                    _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax,
-                                                     _cancellationToken);
+                var typeSymbol = _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax, _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
                 name = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
             }
 
             // Containing types
-            for (var currentType =
-                     clientDeclarationSyntax.Parent as TypeDeclarationSyntax;
+            for (var currentType = clientDeclarationSyntax.Parent as TypeDeclarationSyntax;
                  currentType != null;
                  currentType = currentType.Parent as TypeDeclarationSyntax)
             {
@@ -129,13 +120,10 @@ public partial class HttpClientGenerator
                                      });
                 stringBuilder.Append(' ');
 
-                var typeSymbol =
-                    _semanticModel.GetDeclaredSymbol(currentType,
-                                                     _cancellationToken);
+                var typeSymbol = _semanticModel.GetDeclaredSymbol(currentType, _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
-                var typeName =
-                    typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                var typeName = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                 stringBuilder.Append(typeName);
 
                 builder.Add(stringBuilder.ToString());
@@ -143,17 +131,15 @@ public partial class HttpClientGenerator
 
             // Namespace
             {
-                var typeSymbol =
-                    _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax,
-                                                     _cancellationToken);
+                var typeSymbol = _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax, _cancellationToken);
                 Debug.Assert(typeSymbol != null);
 
                 if (typeSymbol?.ContainingNamespace is not null)
                 {
                     stringBuilder.Append("namespace ");
-                    stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(s_fullTypeFormat
-                                            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle
-                                                                         .Omitted)));
+                    stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(
+                                             s_fullTypeFormat.WithGlobalNamespaceStyle(
+                                                 SymbolDisplayGlobalNamespaceStyle.Omitted)));
                     builder.Add(stringBuilder.ToString());
                 }
             }

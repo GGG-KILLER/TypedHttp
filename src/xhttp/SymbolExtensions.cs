@@ -12,7 +12,7 @@ internal static class SymbolExtensions
              currentType = currentType.BaseType)
         {
             if (SymbolEqualityComparer.Default.Equals(currentType,
-                    possibleParent))
+                                                      possibleParent))
                 return true;
         }
 
