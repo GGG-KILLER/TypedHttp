@@ -27,62 +27,126 @@ namespace Xhttp.Sample
             this.___jsonContext = jsonContext;
         }
 
-        public global::System.Threading.Tasks.Task<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>> GetAllUsers(string token)
+        public async global::System.Threading.Tasks.Task<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>> GetAllUsers(string token)
         {
             var ___route = "users";
-            using var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route);
-
-            ___request.Headers.Add("Authorization", $"Bearer {token}");
-
-            throw new global::System.NotImplementedException();
+            using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
+            {
+                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                {
+                    if (this.___jsonContext is not null)
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>) this.___jsonContext.GetTypeInfo(typeof(global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>))).ConfigureAwait(false);
+                    }
+                    else if (this.___jsonOptions is not null)
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>(this.___jsonOptions).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>().ConfigureAwait(false);
+                    }
+                }
+            }
         }
 
-        public global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> GetById(string id, string token)
+        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> GetById(string token, string id)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
-            using var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route);
-
-            ___request.Headers.Add("Authorization", $"Bearer {token}");
-
-            throw new global::System.NotImplementedException();
+            using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
+            {
+                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                {
+                    if (this.___jsonContext is not null)
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
+                    }
+                    else if (this.___jsonOptions is not null)
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>().ConfigureAwait(false);
+                    }
+                }
+            }
         }
 
-        public global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> CreateUser(string token, global::Xhttp.Sample.NewUser user)
+        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> CreateUser(string token, global::Xhttp.Sample.NewUser user)
         {
             var ___route = "users";
-            using var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route);
-
-            ___request.Headers.Add("Authorization", $"Bearer {token}");
-
-            if (this.___jsonContext is not null)
-                ___request.Content = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.NewUser>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.NewUser)));
-            else
-                ___request.Content = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, options: this.___jsonOptions);
-            throw new global::System.NotImplementedException();
+            using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route))
+            {
+                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                global::System.Net.Http.HttpContent ___httpContent;
+                if (this.___jsonContext is not null)
+                {
+                    ___httpContent = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.NewUser>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.NewUser)));
+                }
+                else
+                {
+                    ___httpContent = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, options: this.___jsonOptions);
+                }
+                using (___httpContent)
+                {
+                    ___request.Content = ___httpContent;
+                    using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                    {
+                        if (this.___jsonContext is not null)
+                        {
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
+                        }
+                        else if (this.___jsonOptions is not null)
+                        {
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>().ConfigureAwait(false);
+                        }
+                    }
+                }
+            }
         }
 
-        public async global::System.Threading.Tasks.Task UpdateUser(string id, string token, global::Xhttp.Sample.NewUser user)
+        public async global::System.Threading.Tasks.Task UpdateUser(string token, string id, global::Xhttp.Sample.NewUser user)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
-            using var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Put, ___route);
-
-            ___request.Headers.Add("Authorization", $"Bearer {token}");
-
-            if (this.___jsonContext is not null)
-                ___request.Content = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.NewUser>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.NewUser)));
-            else
-                ___request.Content = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, options: this.___jsonOptions);
-            throw new global::System.NotImplementedException();
+            using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Put, ___route))
+            {
+                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                global::System.Net.Http.HttpContent ___httpContent;
+                if (this.___jsonContext is not null)
+                {
+                    ___httpContent = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.NewUser>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.NewUser)));
+                }
+                else
+                {
+                    ___httpContent = global::System.Net.Http.Json.JsonContent.Create<global::Xhttp.Sample.NewUser>(user, options: this.___jsonOptions);
+                }
+                using (___httpContent)
+                {
+                    ___request.Content = ___httpContent;
+                    using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                    {
+                    }
+                }
+            }
         }
 
-        public async global::System.Threading.Tasks.Task DeleteUser(string id, string token)
+        public async global::System.Threading.Tasks.Task DeleteUser(string token, string id)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
-            using var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Delete, ___route);
-
-            ___request.Headers.Add("Authorization", $"Bearer {token}");
-
-            throw new global::System.NotImplementedException();
+            using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Delete, ___route))
+            {
+                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                {
+                }
+            }
         }
     }
 }

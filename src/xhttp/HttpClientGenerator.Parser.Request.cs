@@ -43,11 +43,11 @@ public partial class HttpClientGenerator
             var headers = ParseRequestHeaders(attributes[_knownSymbols.Headers]);
 
             var routeParameters = GetRouterParameters(route);
-            var parameters      = ImmutableDictionary.CreateBuilder<string, Parameter>(StringComparer.Ordinal);
+            var parameters      = ImmutableArray.CreateBuilder<Parameter>();
             foreach (var parameter in method.Parameters)
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                parameters.Add(parameter.Name, ParseParameter(routeParameters, headers, parameter));
+                parameters.Add(ParseParameter(routeParameters, headers, parameter));
             }
 
             var returnType = ParseReturnType(method);
@@ -110,7 +110,7 @@ public partial class HttpClientGenerator
 
             // Check for non-generic Task return type
             if (SymbolEqualityComparer.Default.Equals(returnType,
-                                                      _knownSymbols.TaskVoid))
+                                                      _knownSymbols.Task))
             {
                 isAsync    = true;
                 returnKind = ReturnTypeKind.Void;
@@ -118,12 +118,12 @@ public partial class HttpClientGenerator
             }
 
             // Check for Task<T> return type
-            if (returnType is INamedTypeSymbol { TypeParameters.Length: 1 } namedType
-             && SymbolEqualityComparer.Default.Equals(namedType.ConstructUnboundGenericType(), _knownSymbols.TaskT))
+            if (returnType is INamedTypeSymbol { TypeArguments.Length: 1 } namedType
+             && SymbolEqualityComparer.Default.Equals(namedType.OriginalDefinition, _knownSymbols.TaskOfT))
             {
                 isAsync = true;
                 // The rest needs the inner type
-                returnType   = namedType.TypeParameters[0];
+                returnType   = namedType.TypeArguments[0];
                 innerTypeStr = returnType.ToDisplayString(s_fullTypeFormat);
             }
 
@@ -152,7 +152,8 @@ public partial class HttpClientGenerator
             returnKind = ReturnTypeKind.Custom;
 
         end:
-            return new ReturnType(returnKind, isAsync, returnTypeStr, innerTypeStr);
+            // TODO: non-async error diagnostic
+            return new ReturnType(returnKind, returnTypeStr, innerTypeStr);
         }
     }
 }

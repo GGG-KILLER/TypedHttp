@@ -19,7 +19,7 @@ internal sealed class ImmutableByValDictionary<TKey, TValue>(ImmutableDictionary
     public bool ContainsKey(TKey key) { return dictionary.ContainsKey(key); }
 
     /// <inheritdoc />
-    public bool TryGetValue(TKey key, out TValue value) { return dictionary.TryGetValue(key, out value); }
+    public bool TryGetValue(TKey key, out TValue value) { return dictionary.TryGetValue(key, out value!); }
 
     /// <inheritdoc />
     public TValue this[TKey key] => dictionary[key];
