@@ -49,6 +49,12 @@ internal sealed class ImmutableByValDictionary<TKey, TValue>(ImmutableDictionary
     }
 
     /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"[ {string.Join(", ", dictionary.Select(kv => $"[{kv.Key}] = {kv.Value}"))} ]";
+    }
+
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hc = new HashCode();

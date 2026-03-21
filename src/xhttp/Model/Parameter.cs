@@ -19,13 +19,24 @@ namespace Xhttp.Model;
 /// An alias that the parameter can be referred as (must be used as the query
 /// string key).
 /// </param>
-internal readonly record struct Parameter(
+internal sealed record Parameter(
     bool          IsNullable,
     string        Type,
     string        Name,
     ParameterKind Kind,
     string?       PropertyName = null,
-    string?       Alias        = null);
+    string?       Alias        = null)
+{
+    public bool IsRoute    => Kind is ParameterKind.NonStringRoute or ParameterKind.StringRoute;
+    public bool IsQuery    => Kind is ParameterKind.NonStringQuery or ParameterKind.StringQuery;
+    public bool IsProperty => Kind is ParameterKind.NonStringProperty or ParameterKind.StringProperty;
+
+    public bool IsBody
+        => Kind is ParameterKind.JsonBody
+                or ParameterKind.StreamBody
+                or ParameterKind.StringBody
+                or ParameterKind.HttpContentBody;
+}
 
 internal enum ParameterKind
 {
@@ -81,6 +92,9 @@ internal enum ParameterKind
     /// </summary>
     JsonBody,
 
+    /// <summary>
+    /// Parameter being used for other means (header, etc.)
+    /// </summary>
     Ignore,
 
     /// <summary>

@@ -1,9 +1,11 @@
+using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Xhttp.IO;
 using Xhttp.Model;
 
 namespace Xhttp;
@@ -31,25 +33,27 @@ public partial class HttpClientGenerator : IIncrementalGenerator
         var clients = context.SyntaxProvider.ForAttributeWithMetadataName(MetadataNames.Client,
                                                                           static (node, _)
                                                                               => node is InterfaceDeclarationSyntax,
-                                                                          static (ctx, cancellationToken) =>
-                                                                          {
-                                                                              var parser =
-                                                                                  new Parser(ctx.SemanticModel,
-                                                                                      cancellationToken);
-                                                                              return parser.ParseClient(ctx);
-                                                                          });
+                                                                          TransformNode);
 
         context.RegisterSourceOutput(clients, ProcessClient);
     }
 
-    private static void ProcessClient(
-        SourceProductionContext ctx,
-        Client                  client)
+    private static Client TransformNode(GeneratorAttributeSyntaxContext ctx, CancellationToken cancellationToken)
     {
-        var text = Writer.WriteClient(client,
-                                      ctx.CancellationToken);
+        var parser = new Parser(ctx.SemanticModel,
+                                cancellationToken);
+        return parser.ParseClient(ctx);
+    }
+
+    private static void ProcessClient(SourceProductionContext ctx, Client client)
+    {
+        using var stringWriter       = new StringWriter();
+        using var indentedTextWriter = new IndentedTextWriter(stringWriter);
+
+        new ClientWriter(indentedTextWriter).WriteClient(client, ctx.CancellationToken);
+
         ctx.AddSource($"{client.Name.Substring(1)}.Generated.cs",
-                      text);
+                      SourceText.From(stringWriter.ToString(), Encoding.UTF8));
     }
 
     private static SourceText GetEmbeddedText(string name)
@@ -90,12 +94,5 @@ public partial class HttpClientGenerator : IIncrementalGenerator
         /// <param name="context"></param>
         /// <returns></returns>
         public partial Client ParseClient(GeneratorAttributeSyntaxContext context);
-    }
-
-    private static partial class Writer
-    {
-        public static partial SourceText WriteClient(
-            Client            client,
-            CancellationToken cancellationToken = default);
     }
 }
