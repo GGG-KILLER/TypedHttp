@@ -82,16 +82,12 @@ public partial class HttpClientGenerator
         {
             var stringBuilder = new StringBuilder();
             var builder       = ImmutableArray.CreateBuilder<string>();
+            var typeSymbol    = _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax, _cancellationToken);
+            Debug.Assert(typeSymbol != null);
 
             // Client interface
-            {
-                modifiers = string.Join(" ", clientDeclarationSyntax.Modifiers.Select(x => x.Text));
-
-                var typeSymbol = _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax, _cancellationToken);
-                Debug.Assert(typeSymbol != null);
-
-                name = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-            }
+            modifiers = string.Join(" ", clientDeclarationSyntax.Modifiers.Select(x => x.Text));
+            name      = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
             // Containing types
             for (var currentType = clientDeclarationSyntax.Parent as TypeDeclarationSyntax;
@@ -126,29 +122,24 @@ public partial class HttpClientGenerator
                                      });
                 stringBuilder.Append(' ');
 
-                var typeSymbol = _semanticModel.GetDeclaredSymbol(currentType, _cancellationToken);
-                Debug.Assert(typeSymbol != null);
+                var containingTypeSymbol = _semanticModel.GetDeclaredSymbol(currentType, _cancellationToken);
+                Debug.Assert(containingTypeSymbol != null);
 
-                var typeName = typeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                var typeName = containingTypeSymbol!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                 stringBuilder.Append(typeName);
 
                 builder.Add(stringBuilder.ToString());
             }
 
             // Namespace
+            if (typeSymbol.ContainingNamespace is not null)
             {
-                var typeSymbol = _semanticModel.GetDeclaredSymbol(clientDeclarationSyntax, _cancellationToken);
-                Debug.Assert(typeSymbol != null);
-
-                if (typeSymbol?.ContainingNamespace is not null)
-                {
-                    stringBuilder.Clear();
-                    stringBuilder.Append("namespace ");
-                    stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(
-                                             s_fullTypeFormat.WithGlobalNamespaceStyle(
-                                                 SymbolDisplayGlobalNamespaceStyle.Omitted)));
-                    builder.Add(stringBuilder.ToString());
-                }
+                stringBuilder.Clear();
+                stringBuilder.Append("namespace ");
+                stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(
+                                         s_fullTypeFormat.WithGlobalNamespaceStyle(
+                                             SymbolDisplayGlobalNamespaceStyle.Omitted)));
+                builder.Add(stringBuilder.ToString());
             }
 
             builder.Reverse();
