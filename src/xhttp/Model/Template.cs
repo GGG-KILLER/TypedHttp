@@ -31,7 +31,6 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                          // repeated {
                       && index            < input.Length - 1
                       && input[index + 1] != '{':
-                {
                     // Then we end the current part and swap the interpolation kind
 
                     if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
@@ -39,7 +38,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                     currentKind = ~currentKind;
                     currentValue.Clear();
                     break;
-                }
+
                 // Same logic as above but simpler since we don't accept any
                 // escapes for parameter holes.
                 case TemplatePartKind.Parameter when ch == '}':
@@ -48,10 +47,25 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                     currentKind = ~currentKind;
                     currentValue.Clear();
                     break;
+
+                // Special case }} for strings, read as a single }
+                case TemplatePartKind.String
+                    // If we're in a string and the next character closes an interpolation hole
+                    when ch == '}'
+                         // but it is an escaped }
+                      && index            < input.Length - 1
+                      && input[index + 1] == '}':
+                    index++;      // Skip the 2nd } by incrementing past it
+                    goto default; // And append it to the current part
+
                 // Otherwise just append to the current part contents.
                 default: currentValue.Append(ch); break;
             }
         }
+
+        // If we end on a parameter kind, it means there wasn't a closing }
+        if (currentKind == TemplatePartKind.Parameter)
+            throw new FormatException("Unclosed parameter hole in template string.");
 
         // Submit the last part at the end of the input.
         if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
