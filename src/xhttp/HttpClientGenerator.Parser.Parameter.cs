@@ -41,7 +41,7 @@ public partial class HttpClientGenerator
                                                           _knownSymbols.Authorize))
                 {
                     var prefix = "Bearer";
-                    if (attribute.ConstructorArguments.Length > 1)
+                    if (attribute.ConstructorArguments.Length > 0)
                     {
                         prefix =
                             (string)attribute.ConstructorArguments[0].Value!;
