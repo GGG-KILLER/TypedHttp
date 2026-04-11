@@ -182,6 +182,10 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
     {
         var cts1Str = ctsParam is not null ? ctsParam.Name : string.Empty;
         var cts2Str = ctsParam is not null ? $", {ctsParam.Name}" : string.Empty;
+
+        if (ret.Kind != ReturnTypeKind.HttpResponseMessage)
+            Writer.WriteLine($"{Names.ResponseVar}.EnsureSuccessStatusCode();");
+
         switch (ret.Kind)
         {
             case ReturnTypeKind.HttpResponseMessage: Writer.WriteLine($"return {Names.ResponseVar};"); break;

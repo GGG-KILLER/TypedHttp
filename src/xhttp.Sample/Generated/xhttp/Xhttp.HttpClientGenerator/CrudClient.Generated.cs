@@ -35,6 +35,7 @@ namespace Xhttp.Sample
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                 {
+                    ___response.EnsureSuccessStatusCode();
                     if (this.___jsonContext is not null)
                     {
                         return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>) this.___jsonContext.GetTypeInfo(typeof(global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>))).ConfigureAwait(false);
@@ -59,6 +60,7 @@ namespace Xhttp.Sample
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                 {
+                    ___response.EnsureSuccessStatusCode();
                     if (this.___jsonContext is not null)
                     {
                         return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
@@ -95,6 +97,7 @@ namespace Xhttp.Sample
                     ___request.Content = ___httpContent;
                     using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                     {
+                        ___response.EnsureSuccessStatusCode();
                         if (this.___jsonContext is not null)
                         {
                             return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
@@ -132,6 +135,7 @@ namespace Xhttp.Sample
                     ___request.Content = ___httpContent;
                     using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                     {
+                        ___response.EnsureSuccessStatusCode();
                     }
                 }
             }
@@ -145,6 +149,7 @@ namespace Xhttp.Sample
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                 {
+                    ___response.EnsureSuccessStatusCode();
                 }
             }
         }
