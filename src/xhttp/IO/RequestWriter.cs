@@ -40,7 +40,7 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
             cancellationToken.ThrowIfCancellationRequested();
 
             Writer.WriteLine(
-                $"{Names.RequestVar}.Properties.Add({SymbolDisplay.FormatLiteral(parameter.PropertyName ?? parameter.Name, quote: true)}, {parameter.Name})");
+                $"{Names.RequestVar}.Properties.Add({SymbolDisplay.FormatLiteral(parameter.PropertyName ?? parameter.Name, quote: true)}, {parameter.Name});");
         }
         foreach (var header in clientHeaders)
         {
