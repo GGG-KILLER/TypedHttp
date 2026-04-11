@@ -81,7 +81,12 @@ public partial class HttpClientGenerator
 
             foreach (var attribute in attributes)
             {
-                foreach (var rawHeader in attribute.ConstructorArguments)
+                // Ignore empty [Headers] or ones with non-array arguments
+                if (attribute.ConstructorArguments.Length  < 1
+                 || attribute.ConstructorArguments[0].Kind != TypedConstantKind.Array)
+                    continue;
+
+                foreach (var rawHeader in attribute.ConstructorArguments[0].Values)
                 {
                     _cancellationToken.ThrowIfCancellationRequested();
 

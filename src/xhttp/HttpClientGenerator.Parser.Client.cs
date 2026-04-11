@@ -50,6 +50,11 @@ public partial class HttpClientGenerator
                 // Ignore attributes which aren't [Headers]
                 if (!SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _knownSymbols.Headers)) continue;
 
+                // Ignore empty [Headers] or ones with non-array arguments
+                if (attribute.ConstructorArguments.Length  < 1
+                 || attribute.ConstructorArguments[0].Kind != TypedConstantKind.Array)
+                    continue;
+
                 foreach (var header in attribute.ConstructorArguments[0].Values)
                 {
                     _cancellationToken.ThrowIfCancellationRequested();
