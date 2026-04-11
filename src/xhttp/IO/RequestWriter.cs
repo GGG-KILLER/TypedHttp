@@ -130,6 +130,7 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
         if (string.Equals(method, "HEAD",    StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Head";
         if (string.Equals(method, "POST",    StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Post";
         if (string.Equals(method, "PUT",     StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Put";
+        if (string.Equals(method, "PATCH",   StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Patch";
         if (string.Equals(method, "TRACE",   StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Trace";
         if (string.Equals(method, "DELETE",  StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Delete";
         if (string.Equals(method, "OPTIONS", StringComparison.OrdinalIgnoreCase)) return $"{Types.HttpMethod}.Options";
@@ -198,7 +199,8 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
                 Writer.WriteLine($"if (this.{Names.JsonContextField} is not null)");
                 using (Writer.Indent())
                 {
-                    var arg1 = $"({Types.JsonTypeInfo}<{ret.InnerType}>) this.{Names.JsonContextField}.GetTypeInfo(typeof({ret.InnerType}))";
+                    var arg1 =
+                        $"({Types.JsonTypeInfo}<{ret.InnerType}>) this.{Names.JsonContextField}.GetTypeInfo(typeof({ret.InnerType}))";
                     Writer.WriteLine(
                         $"return await {Names.ResponseVar}.Content.ReadFromJsonAsync<{ret.InnerType}>({arg1}{cts2Str}).ConfigureAwait(false);");
                 }
