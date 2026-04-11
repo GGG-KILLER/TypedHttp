@@ -48,16 +48,6 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                     currentValue.Clear();
                     break;
 
-                // Special case }} for strings, read as a single }
-                case TemplatePartKind.String
-                    // If we're in a string and the next character closes an interpolation hole
-                    when ch == '}'
-                         // but it is an escaped }
-                      && index            < input.Length - 1
-                      && input[index + 1] == '}':
-                    index++;      // Skip the 2nd } by incrementing past it
-                    goto default; // And append it to the current part
-
                 // Otherwise just append to the current part contents.
                 default: currentValue.Append(ch); break;
             }
