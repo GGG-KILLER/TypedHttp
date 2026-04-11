@@ -23,6 +23,10 @@ internal sealed class KnownSymbols(SemanticModel semanticModel)
 
     public INamedTypeSymbol TaskOfT => field ??= GetTypeByMetadataName(typeof(Task<>).FullName!);
 
+    public INamedTypeSymbol ValueTask => field ??= GetTypeByMetadataName(typeof(ValueTask).FullName!);
+
+    public INamedTypeSymbol ValueTaskOfT => field ??= GetTypeByMetadataName(typeof(ValueTask<>).FullName!);
+
     public INamedTypeSymbol Head => field ??= GetTypeByMetadataName("Xhttp.HeadAttribute");
 
     public INamedTypeSymbol Get => field ??= GetTypeByMetadataName("Xhttp.GetAttribute");

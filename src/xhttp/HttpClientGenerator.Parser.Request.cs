@@ -113,18 +113,19 @@ public partial class HttpClientGenerator
                 goto end;
             }
 
-            // Check for non-generic Task return type
-            if (SymbolEqualityComparer.Default.Equals(returnType,
-                                                      _knownSymbols.Task))
+            // Check for non-generic Task/ValueTask return type
+            if (SymbolEqualityComparer.Default.Equals(returnType, _knownSymbols.Task)
+             || SymbolEqualityComparer.Default.Equals(returnType, _knownSymbols.ValueTask))
             {
                 isAsync    = true;
                 returnKind = ReturnTypeKind.Void;
                 goto end;
             }
 
-            // Check for Task<T> return type
+            // Check for Task<T>/ValueTask<T> return type
             if (returnType is INamedTypeSymbol { TypeArguments.Length: 1 } namedType
-             && SymbolEqualityComparer.Default.Equals(namedType.OriginalDefinition, _knownSymbols.TaskOfT))
+             && (SymbolEqualityComparer.Default.Equals(namedType.OriginalDefinition, _knownSymbols.TaskOfT)
+              || SymbolEqualityComparer.Default.Equals(namedType.OriginalDefinition, _knownSymbols.ValueTaskOfT)))
             {
                 isAsync = true;
                 // The rest needs the inner type
