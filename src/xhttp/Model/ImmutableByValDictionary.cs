@@ -45,7 +45,7 @@ internal sealed class ImmutableByValDictionary<TKey, TValue>(ImmutableDictionary
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is ImmutableByValDictionary<TKey, TValue> other && Equals(other);
+        return ReferenceEquals(this, obj!) || obj is ImmutableByValDictionary<TKey, TValue> other && Equals(other);
     }
 
     /// <inheritdoc />
