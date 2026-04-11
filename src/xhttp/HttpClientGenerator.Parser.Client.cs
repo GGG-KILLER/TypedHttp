@@ -50,7 +50,7 @@ public partial class HttpClientGenerator
                 // Ignore attributes which aren't [Headers]
                 if (!SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, _knownSymbols.Headers)) continue;
 
-                foreach (var header in attribute.ConstructorArguments)
+                foreach (var header in attribute.ConstructorArguments[0].Values)
                 {
                     _cancellationToken.ThrowIfCancellationRequested();
 
