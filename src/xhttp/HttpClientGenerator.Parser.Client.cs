@@ -118,10 +118,11 @@ public partial class HttpClientGenerator
 
                 stringBuilder.Append(currentType.Kind() switch
                                      {
-                                         SyntaxKind.ClassDeclaration => "class",
-                                         SyntaxKind.StructDeclaration =>
-                                             "struct",
-                                         _ => throw new Exception("Unreachable.")
+                                         SyntaxKind.ClassDeclaration        => "class",
+                                         SyntaxKind.StructDeclaration       => "struct",
+                                         SyntaxKind.RecordDeclaration       => "record",
+                                         SyntaxKind.RecordStructDeclaration => "record struct",
+                                         _                                  => throw new Exception("Unreachable.")
                                      });
                 stringBuilder.Append(' ');
 
