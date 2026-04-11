@@ -14,7 +14,7 @@ public partial class HttpClientGenerator
             IParameterSymbol               parameter)
         {
             ParameterKind parameterKind;
-            string?       propertyName = null, alias = null;
+            string?       propertyName = null, queryParameterName = null;
             var           isString     = parameter.Type.SpecialType == SpecialType.System_String;
 
             if (SymbolEqualityComparer.Default.Equals(parameter.Type,
@@ -29,11 +29,11 @@ public partial class HttpClientGenerator
             {
                 _cancellationToken.ThrowIfCancellationRequested();
 
-                // [AliasAs]
+                // [Query]
                 if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass,
-                                                          _knownSymbols.Alias))
+                                                          _knownSymbols.Query))
                 {
-                    alias = (string)attribute.ConstructorArguments[0].Value!;
+                    queryParameterName = (string)attribute.ConstructorArguments[0].Value!;
                 }
 
                 // [Authorize]
@@ -98,7 +98,7 @@ public partial class HttpClientGenerator
                                  Name: parameter.Name,
                                  Kind: parameterKind,
                                  PropertyName: propertyName,
-                                 Alias: alias);
+                                 QueryParameterName: queryParameterName);
         }
 
         private ParameterKind ParseBodyType(ITypeSymbol type)

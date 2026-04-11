@@ -15,17 +15,16 @@ namespace Xhttp.Model;
 /// <param name="PropertyName">
 /// The name of the property the parameter should be stored under.
 /// </param>
-/// <param name="Alias">
-/// An alias that the parameter can be referred as (must be used as the query
-/// string key).
+/// <param name="QueryParameterName">
+/// Name that the parameter will be sent under in the query string.
 /// </param>
 internal sealed record Parameter(
     bool          IsNullable,
     string        Type,
     string        Name,
     ParameterKind Kind,
-    string?       PropertyName = null,
-    string?       Alias        = null)
+    string?       PropertyName       = null,
+    string?       QueryParameterName = null)
 {
     public bool IsRoute    => Kind is ParameterKind.NonStringRoute or ParameterKind.StringRoute;
     public bool IsQuery    => Kind is ParameterKind.NonStringQuery or ParameterKind.StringQuery;

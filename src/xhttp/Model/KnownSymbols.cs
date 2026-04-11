@@ -52,7 +52,7 @@ internal sealed class KnownSymbols(SemanticModel semanticModel)
 
     public INamedTypeSymbol Headers => field ??= GetTypeByMetadataName("Xhttp.HeadersAttribute");
 
-    public INamedTypeSymbol Alias => field ??= GetTypeByMetadataName("Xhttp.AliasAsAttribute");
+    public INamedTypeSymbol Query => field ??= GetTypeByMetadataName("Xhttp.QueryAttribute");
 
     public INamedTypeSymbol Body => field ??= GetTypeByMetadataName("Xhttp.BodyAttribute");
 

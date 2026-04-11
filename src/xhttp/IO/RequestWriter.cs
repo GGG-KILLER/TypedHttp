@@ -114,7 +114,7 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
             if (parameter.IsNullable) Writer.Write($"if ({parameter.Name} is not null) ");
 
             var encodedName =
-                SymbolDisplay.FormatLiteral(HttpUtility.UrlEncode(parameter.Alias ?? parameter.Name), quote: false);
+                SymbolDisplay.FormatLiteral(HttpUtility.UrlEncode(parameter.QueryParameterName ?? parameter.Name), quote: false);
             Writer.WriteLine(
                 $"{Names.RouteBuilderVar}.Append($\"{encodedName}={{({Types.HttpUtility}.UrlEncode({parameter.Name}.ToString()))}}&\");");
         }
