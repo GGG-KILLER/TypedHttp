@@ -33,7 +33,7 @@ internal sealed class ImmutableByValDictionary<TKey, TValue>(ImmutableDictionary
     /// <inheritdoc />
     public bool Equals(ImmutableByValDictionary<TKey, TValue>? other)
     {
-        if (other is null) return false;
+        if (other is null || dictionary.Count != other.Count) return false;
         foreach (var kv in dictionary)
         {
             if (!other.TryGetValue(kv.Key!, out var value) || !dictionary.ValueComparer.Equals(value, kv.Value))
