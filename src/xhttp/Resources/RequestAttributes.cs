@@ -130,6 +130,8 @@ internal sealed class OptionsAttribute(string route) : Attribute;
 ///     and for OPTIONS use <see cref="OptionsAttribute"/>.
 /// </para>
 /// </remarks>
+/// <param name="method">
+/// The HTTP method to use when sending the request.
 /// <param name="route">
 /// The route the request should be made to. <b>SHOULD NOT</b> start with a
 /// slash.

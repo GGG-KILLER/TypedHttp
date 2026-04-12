@@ -95,7 +95,7 @@ internal sealed class PropertyAttribute : Attribute
 }
 
 /// <summary>
-/// Add the <code>Authorize</code> header to the request with the value of the
+/// Add the <code>Authorization</code> header to the request with the value of the
 /// parameter.
 /// </summary>
 /// <remarks>
