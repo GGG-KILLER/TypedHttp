@@ -1,12 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "plugins": ["sentence-case"],
   "release-type": "simple",
-  "include-component-in-tag": false,
-  "include-v-in-tag": false,
-  "draft-pull-request": true,
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "include-commit-authors": true,
   "packages": {
-    "src/xhttp": {
+    ".": {
       "package-name": "xhttp",
+      "exclude-paths": [
+        ".github",
+        ".idea",
+        "src/xhttp.Sample",
+      ],
       "extra-files": [
         {
           "type": "xml",
@@ -19,8 +25,5 @@
         }
       ]
     }
-  },
-  "plugins": [
-    "sentence-case"
-  ]
+  }
 }
