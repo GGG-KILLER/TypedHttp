@@ -124,7 +124,7 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
                 $"{Names.RouteBuilderVar}.Append($\"{encodedName}={{({Types.HttpUtility}.UrlEncode({parameter.Name}.ToString()))}}&\");");
         }
 
-        // Use the .ToString(^1) trick to remove any trailing ?s and &s
+        // Use the .ToString(0, len - 1) trick to remove any trailing ?s and &s
         Writer.WriteLine(
             $"var {Names.RouteVar} = {Names.RouteBuilderVar}.ToString(0, {Names.RouteBuilderVar}.Length - 1);");
     }
@@ -151,7 +151,11 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
         Writer.WriteLine($"{Types.HttpContent} {Names.HttpContentVar};");
         switch (body.Kind)
         {
-            case ParameterKind.HttpContentBody: Writer.WriteLine($"{Names.HttpContentVar} = {body.Name};"); break;
+            case ParameterKind.HttpContentBody:
+                // No using here since we assume the caller-provided resources should be disposed
+                // of by the caller.
+                Writer.WriteLine($"{Names.HttpContentVar} = {body.Name};");
+                break;
 
             case ParameterKind.StreamBody:
                 Writer.WriteLine($"using ({Names.HttpContentVar} = new {Types.StreamContent}({body.Name}))");
