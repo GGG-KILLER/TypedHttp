@@ -105,4 +105,4 @@ internal sealed class PropertyAttribute : Attribute
 /// The authorization scheme to use (e.g.: <code>"Bearer"</code>).
 /// </param>
 [Embedded, Conditional("XHTTP_KEEP_ATTRIBUTES"), AttributeUsage(AttributeTargets.Parameter)]
-public class AuthorizeAttribute(string scheme = "Bearer") : Attribute;
+internal class AuthorizeAttribute(string scheme = "Bearer") : Attribute;
