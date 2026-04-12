@@ -12,6 +12,10 @@
           "type": "xml",
           "path": "src/xhttp/xhttp.csproj",
           "xpath": "//Project/PropertyGroup/Version"
+        },
+        {
+          "type": "generic",
+          "path": "src/xhttp/ThisVersion.cs",
         }
       ]
     }

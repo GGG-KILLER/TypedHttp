@@ -13,13 +13,13 @@ public class HeaderTests
 
         var header = Header.Parse(input);
 
-        Assert.Equal(1, header.Name.Parts.Count);
-        Assert.Equal("Authorization", header.Name.Parts[0].Value);
-        Assert.Equal(2, header.Value.Parts.Count);
-        Assert.Equal(TemplatePartKind.String, header.Value.Parts[0].Kind);
-        Assert.Equal("Bearer ", header.Value.Parts[0].Value);
+        Assert.Equal(1,                          header.Name.Parts.Count);
+        Assert.Equal("Authorization",            header.Name.Parts[0].Value);
+        Assert.Equal(2,                          header.Value.Parts.Count);
+        Assert.Equal(TemplatePartKind.String,    header.Value.Parts[0].Kind);
+        Assert.Equal("Bearer ",                  header.Value.Parts[0].Value);
         Assert.Equal(TemplatePartKind.Parameter, header.Value.Parts[1].Kind);
-        Assert.Equal("token", header.Value.Parts[1].Value);
+        Assert.Equal("token",                    header.Value.Parts[1].Value);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class HeaderTests
 
         var header = Header.Parse(input);
 
-        Assert.Equal(1, header.Name.Parts.Count);
+        Assert.Equal(1,              header.Name.Parts.Count);
         Assert.Equal("Content-Type", header.Name.Parts[0].Value);
         Assert.Empty(header.Value.Parts.Array);
     }

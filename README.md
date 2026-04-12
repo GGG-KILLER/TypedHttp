@@ -10,7 +10,7 @@ Has the basic `Get`, `Post`, `Put`, `Delete`, `Patch`, `Head`, `Options` and gen
 
 Has the `Headers` attribute for specifying request headers all at once.
 
-Has the `AliasAs`, `Body`, `Header`, `Property` and `Authorize` attributes for parameters.
+Has the `AliasAs` (as `Query`), `Body`, `Header`, `Property` and `Authorize` attributes for parameters.
 
 ## TODO
 
