@@ -10,11 +10,10 @@ using Microsoft.CodeAnalysis;
 namespace Xhttp;
 
 /// <summary>
-/// Uses an alternative name for this parameter in route templates and query
-/// parameters.
+/// Override the name this parameter will have in the query string.
 /// </summary>
 [Embedded, Conditional("XHTTP_KEEP_ATTRIBUTES"), AttributeUsage(AttributeTargets.Parameter)]
-internal sealed class AliasAsAttribute(string name) : Attribute;
+internal sealed class QueryAttribute(string name) : Attribute;
 
 /// <summary>
 /// Indicates this parameter should be sent as the body of the request.
