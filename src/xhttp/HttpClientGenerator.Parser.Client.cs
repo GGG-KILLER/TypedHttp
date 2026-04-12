@@ -136,7 +136,7 @@ public partial class HttpClientGenerator
             {
                 stringBuilder.Clear();
                 stringBuilder.Append("namespace ");
-                stringBuilder.Append(typeSymbol.ContainingNamespace!.ToDisplayString(
+                stringBuilder.Append(typeSymbol.ContainingNamespace.ToDisplayString(
                                          s_fullTypeFormat.WithGlobalNamespaceStyle(
                                              SymbolDisplayGlobalNamespaceStyle.Omitted)));
                 builder.Add(stringBuilder.ToString());

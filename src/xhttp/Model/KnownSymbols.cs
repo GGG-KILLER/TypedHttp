@@ -63,6 +63,6 @@ internal sealed class KnownSymbols(SemanticModel semanticModel)
     public INamedTypeSymbol Authorize => field ??= GetTypeByMetadataName("Xhttp.AuthorizeAttribute");
 
     private INamedTypeSymbol GetTypeByMetadataName(string name)
-        => semanticModel.Compilation.GetTypeByMetadataName(name)!
+        => semanticModel.Compilation.GetTypeByMetadataName(name)
         ?? throw new InvalidOperationException($"Unable to get INamedTypeSymbol for {name}");
 }
