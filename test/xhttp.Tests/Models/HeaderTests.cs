@@ -9,12 +9,12 @@ public class HeaderTests
     [Fact]
     public void Parse_ValidHeader_ReturnsHeaderWithNameAndValue()
     {
-        var input = "Authorization: Bearer {token}";
+        const string input = "Authorization: Bearer {token}";
 
         var header = Header.Parse(input);
 
-        Assert.Equal(1,                          header.Name.Parts.Count);
-        Assert.Equal("Authorization",            header.Name.Parts[0].Value);
+        var name = Assert.Single(header.Name.Parts);
+        Assert.Equal("Authorization",            name.Value);
         Assert.Equal(2,                          header.Value.Parts.Count);
         Assert.Equal(TemplatePartKind.String,    header.Value.Parts[0].Kind);
         Assert.Equal("Bearer ",                  header.Value.Parts[0].Value);
@@ -25,7 +25,7 @@ public class HeaderTests
     [Fact]
     public void Parse_HeaderWithoutColon_ThrowsFormatException()
     {
-        var input = "InvalidHeader";
+        const string input = "InvalidHeader";
 
         Assert.Throws<FormatException>(() => Header.Parse(input));
     }
@@ -33,12 +33,12 @@ public class HeaderTests
     [Fact]
     public void Parse_HeaderWithOnlyName_ReturnsEmptyValue()
     {
-        var input = "Content-Type:";
+        const string input = "Content-Type:";
 
         var header = Header.Parse(input);
 
-        Assert.Equal(1,              header.Name.Parts.Count);
-        Assert.Equal("Content-Type", header.Name.Parts[0].Value);
+        var name = Assert.Single(header.Name.Parts.Array);
+        Assert.Equal("Content-Type", name.Value);
         Assert.Empty(header.Value.Parts.Array);
     }
 }

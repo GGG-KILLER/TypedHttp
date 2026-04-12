@@ -23,20 +23,29 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
             var ch = input[index];
             switch (currentKind)
             {
-                // If we're in a string part
-                case TemplatePartKind.String
-                    // and the next character opens an interpolation hole
-                    when ch == '{'
-                         // and it is not escaping the next character by being a
-                         // repeated {
-                      && index            < input.Length - 1
-                      && input[index + 1] != '{':
-                    // Then we end the current part and swap the interpolation kind
+                // Handle {
+                case TemplatePartKind.String when ch == '{':
 
-                    if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
+                    // If it's not an escaped {{, then we end the current part and swap the
+                    // interpolation kind
+                    if (index < input.Length - 1 && input[index + 1] != '{')
+                    {
+                        // Then we end the current part and swap the interpolation kind
 
-                    currentKind = ~currentKind;
-                    currentValue.Clear();
+                        if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
+
+                        currentKind = ~currentKind;
+                        currentValue.Clear();
+                    }
+                    // If it is an escaped {{, we append both { and move on
+                    else if (index < input.Length - 1 && input[index + 1] == '{')
+                    {
+                        // Append both { and move on
+                        currentValue.Append(ch);
+                        currentValue.Append(ch);
+                        index++;
+                    }
+                    else { throw new FormatException("Unclosed { in template string."); }
                     break;
 
                 // Same logic as above but simpler since we don't accept any
@@ -54,8 +63,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
         }
 
         // If we end on a parameter kind, it means there wasn't a closing }
-        if (currentKind == TemplatePartKind.Parameter)
-            throw new FormatException("Unclosed parameter hole in template string.");
+        if (currentKind == TemplatePartKind.Parameter) throw new FormatException("Unclosed { in template string.");
 
         // Submit the last part at the end of the input.
         if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
