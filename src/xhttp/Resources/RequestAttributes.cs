@@ -37,12 +37,12 @@ internal sealed class HeadAttribute(string route) : Attribute;
 internal sealed class GetAttribute(string route) : Attribute;
 
 /// <summary>
-/// Indicates this method is for a GET HTTP request to the provided
+/// Indicates this method is for a POST HTTP request to the provided
 /// <paramref name="route"/>.
 /// </summary>
 /// <remarks>
 /// This is equivalent to using the <see cref="RequestAttribute"/> with the
-/// first parameter as <code>"GET"</code>.
+/// first parameter as <code>"POST"</code>.
 /// </remarks>
 /// <param name="route">
 /// The route the request should be made to. <b>SHOULD NOT</b> start with a
