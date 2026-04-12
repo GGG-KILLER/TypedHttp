@@ -14,9 +14,10 @@ public partial class HttpClientGenerator
     {
         public partial Client ParseClient(GeneratorAttributeSyntaxContext context)
         {
-            var scopes = ParseContainingScopes((TypeDeclarationSyntax)context.TargetNode,
-                                               out var interfaceModifiers,
-                                               out var interfaceName);
+            var scopes = ParseContainingScopes(
+                (TypeDeclarationSyntax)context.TargetNode,
+                out var interfaceModifiers,
+                out var interfaceName);
 
             var headers = ParseHeaders(context.TargetSymbol);
 
@@ -28,12 +29,13 @@ public partial class HttpClientGenerator
                 if (request is not null) requests.Add(request);
             }
 
-            return new Client(Containers: scopes,
-                              Modifiers: interfaceModifiers,
-                              Name: interfaceName,
-                              Headers: headers,
-                              Requests: requests.DrainToImmutable().ByVal(),
-                              Diagnostics: _diagnostics.DrainToImmutable().ByVal());
+            return new Client(
+                Containers: scopes,
+                Modifiers: interfaceModifiers,
+                Name: interfaceName,
+                Headers: headers,
+                Requests: requests.DrainToImmutable().ByVal(),
+                Diagnostics: _diagnostics.DrainToImmutable().ByVal());
         }
 
         /// <summary>
@@ -112,14 +114,15 @@ public partial class HttpClientGenerator
                 //     return false;
                 // }
 
-                stringBuilder.Append(currentType.Kind() switch
-                                     {
-                                         SyntaxKind.ClassDeclaration        => "class",
-                                         SyntaxKind.StructDeclaration       => "struct",
-                                         SyntaxKind.RecordDeclaration       => "record",
-                                         SyntaxKind.RecordStructDeclaration => "record struct",
-                                         _                                  => throw new Exception("Unreachable.")
-                                     });
+                stringBuilder.Append(
+                    currentType.Kind() switch
+                    {
+                        SyntaxKind.ClassDeclaration        => "class",
+                        SyntaxKind.StructDeclaration       => "struct",
+                        SyntaxKind.RecordDeclaration       => "record",
+                        SyntaxKind.RecordStructDeclaration => "record struct",
+                        _                                  => throw new InvalidOperationException("Unreachable.")
+                    });
                 stringBuilder.Append(' ');
 
                 var containingTypeSymbol = _semanticModel.GetDeclaredSymbol(currentType, _cancellationToken);
@@ -136,9 +139,9 @@ public partial class HttpClientGenerator
             {
                 stringBuilder.Clear();
                 stringBuilder.Append("namespace ");
-                stringBuilder.Append(typeSymbol.ContainingNamespace.ToDisplayString(
-                                         s_fullTypeFormat.WithGlobalNamespaceStyle(
-                                             SymbolDisplayGlobalNamespaceStyle.Omitted)));
+                stringBuilder.Append(
+                    typeSymbol.ContainingNamespace.ToDisplayString(
+                        s_fullTypeFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)));
                 builder.Add(stringBuilder.ToString());
             }
 
