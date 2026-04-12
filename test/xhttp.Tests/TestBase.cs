@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -10,15 +11,21 @@ namespace Xhttp.Tests;
 
 public class TestBase
 {
-    private static Assembly s_generatorAssembly = typeof(HttpClientGenerator).Assembly;
+    private static readonly Assembly s_generatorAssembly = typeof(HttpClientGenerator).Assembly;
+
+    protected static string CSharp([StringSyntax("C#")] string code) => code;
 
     protected static Task TestGenerator(string inputSource, (string filename, string content) expectedOutput)
     {
         var test = new CSharpSourceGeneratorTest<HttpClientGenerator, DefaultVerifier>();
 #if NET8_0
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+#elif NET9_0
+        test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
 #elif NET10_0
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net100;
+#elif NET11_0
+        test.ReferenceAssemblies = ReferenceAssemblies.Net.Net110;
 #endif
         test.TestCode             = inputSource;
         test.TestState.OutputKind = OutputKind.DynamicallyLinkedLibrary;
