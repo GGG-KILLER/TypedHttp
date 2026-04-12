@@ -11,7 +11,10 @@ namespace Xhttp.Model;
 internal sealed record ReturnType(
     ReturnTypeKind Kind,
     string         Type,
-    string?        InnerType);
+    string?        InnerType)
+{
+    public bool NeedsUndisposedResponse => Kind is ReturnTypeKind.HttpResponseMessage or ReturnTypeKind.Stream;
+}
 
 /// <summary>
 /// The kind of response that the user expects to receive from a request method.

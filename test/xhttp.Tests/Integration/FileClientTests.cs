@@ -85,11 +85,9 @@ public class FileClientTests : TestBase
                           var ___route = $"buckets/{(global::System.Web.HttpUtility.UrlPathEncode(bucketId.ToString()))}/files/{(global::System.Web.HttpUtility.UrlPathEncode(fileId.ToString()))}";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
-                              {
-                                  ___response.EnsureSuccessStatusCode();
-                                  return await ___response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-                              }
+                              var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false);
+                              ___response.EnsureSuccessStatusCode();
+                              return await ___response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
                           }
                       }
                   }

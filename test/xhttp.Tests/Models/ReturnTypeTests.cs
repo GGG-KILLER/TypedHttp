@@ -55,4 +55,17 @@ public class ReturnTypeTests
         Assert.Equal(ReturnTypeKind.Stream, returnType.Kind);
         Assert.Null(returnType.InnerType);
     }
+
+    [Theory]
+    [InlineData((int) ReturnTypeKind.HttpResponseMessage, true)]
+    [InlineData((int) ReturnTypeKind.Stream,              true)]
+    [InlineData((int) ReturnTypeKind.String,              false)]
+    [InlineData((int) ReturnTypeKind.Void,                false)]
+    [InlineData((int) ReturnTypeKind.Custom,              false)]
+    public void NeedsUndisposedResponse_MatchesExpected(int kindInt, bool expected)
+    {
+        var returnType = new ReturnType((ReturnTypeKind) kindInt, "T", null);
+
+        Assert.Equal(expected, returnType.NeedsUndisposedResponse);
+    }
 }

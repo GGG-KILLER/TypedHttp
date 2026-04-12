@@ -65,15 +65,16 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
 
         using var _3 = WriteRequestContent(request.Parameters.FirstOrDefault(p => p.IsBody));
 
-        if (request.ReturnType.Kind != ReturnTypeKind.HttpResponseMessage) Writer.Write("using (");
+        if (!request.ReturnType.NeedsUndisposedResponse) Writer.Write("using (");
         Writer.Write($"var {Names.ResponseVar} = ");
         var ctsParam = request.Parameters.FirstOrDefault(p => p.Kind == ParameterKind.CancellationToken);
-        Writer.Write(ctsParam is not null
-                         ? $"await this.{Names.HttpClientField}.SendAsync({Names.RequestVar}, {ctsParam.Name}).ConfigureAwait(false)"
-                         : $"await this.{Names.HttpClientField}.SendAsync({Names.RequestVar}).ConfigureAwait(false)");
+        Writer.Write(
+            ctsParam is not null
+                ? $"await this.{Names.HttpClientField}.SendAsync({Names.RequestVar}, {ctsParam.Name}).ConfigureAwait(false)"
+                : $"await this.{Names.HttpClientField}.SendAsync({Names.RequestVar}).ConfigureAwait(false)");
 
         Indentation? responseIndent = null;
-        if (request.ReturnType.Kind != ReturnTypeKind.HttpResponseMessage)
+        if (!request.ReturnType.NeedsUndisposedResponse)
         {
             Writer.WriteLine(')');
             responseIndent = Writer.Indent();
@@ -93,16 +94,18 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
             cancellationToken.ThrowIfCancellationRequested();
 
             Writer.Write($"var {Names.RouteVar} = ");
-            WriteTemplate(request.Route,
-                          static str => $"({Types.HttpUtility}.UrlPathEncode({str}.ToString()))");
+            WriteTemplate(
+                request.Route,
+                static str => $"({Types.HttpUtility}.UrlPathEncode({str}.ToString()))");
             Writer.WriteLine(';');
             return;
         }
 
         // Write the path code
         Writer.Write($"var {Names.RouteBuilderVar} = new {Types.StringBuilder}(");
-        WriteTemplate(request.Route,
-                      static str => $"({Types.HttpUtility}.UrlPathEncode({str}.ToString()))");
+        WriteTemplate(
+            request.Route,
+            static str => $"({Types.HttpUtility}.UrlPathEncode({str}.ToString()))");
         Writer.WriteLine(");");
 
         // Write the query string code
@@ -114,7 +117,9 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
             if (parameter.IsNullable) Writer.Write($"if ({parameter.Name} is not null) ");
 
             var encodedName =
-                SymbolDisplay.FormatLiteral(HttpUtility.UrlEncode(parameter.QueryParameterName ?? parameter.Name), quote: false);
+                SymbolDisplay.FormatLiteral(
+                    HttpUtility.UrlEncode(parameter.QueryParameterName ?? parameter.Name),
+                    quote: false);
             Writer.WriteLine(
                 $"{Names.RouteBuilderVar}.Append($\"{encodedName}={{({Types.HttpUtility}.UrlEncode({parameter.Name}.ToString()))}}&\");");
         }

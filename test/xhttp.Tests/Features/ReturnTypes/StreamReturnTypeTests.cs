@@ -60,11 +60,9 @@ public class StreamReturnTypeTests : TestBase
                           var ___route = "download";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
-                              {
-                                  ___response.EnsureSuccessStatusCode();
-                                  return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                              }
+                              var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false);
+                              ___response.EnsureSuccessStatusCode();
+                              return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                           }
                       }
                   }
