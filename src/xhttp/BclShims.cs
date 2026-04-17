@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#if NETSTANDARD2_0
 #pragma warning disable IDE0079
 #pragma warning disable S3903
 
@@ -13,12 +14,15 @@ namespace System.Runtime.CompilerServices
     internal static class IsExternalInit;
 }
 
+/* This enables support for custom collection initializers on older frameworks. */
+
 namespace System.Runtime.CompilerServices
 {
-    [AttributeUsage(AttributeTargets.Class
-                  | AttributeTargets.Struct
-                  | AttributeTargets.Interface,
-                    Inherited = false)]
+    [AttributeUsage(
+        AttributeTargets.Class
+      | AttributeTargets.Struct
+      | AttributeTargets.Interface,
+        Inherited = false)]
     internal sealed class CollectionBuilderAttribute : Attribute
     {
         /// <summary>Initialize the attribute to refer to the <paramref name="methodName"/> method on the <paramref name="builderType"/> type.</summary>
@@ -43,3 +47,4 @@ namespace System.Runtime.CompilerServices
         public string MethodName { get; }
     }
 }
+#endif
