@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Xhttp.Sample;
@@ -7,17 +8,29 @@ namespace Xhttp.Sample;
 public interface ICrudClient
 {
     [Get("users")]
-    public Task<ImmutableArray<User>> GetAllUsers([Authorize] string token);
+    Task<ImmutableArray<User>> GetAllUsers(
+        [Authorize] string token,
+        CancellationToken  cancellationToken = default);
 
     [Get("users/{id}")]
-    public Task<User> GetById([Authorize] string token, string id);
+    Task<User> GetById([Authorize] string token, string id, CancellationToken cancellationToken = default);
 
     [Post("users")]
-    public Task<User> CreateUser([Authorize] string token, [Body] NewUser user);
+    Task<User> CreateUser(
+        [Authorize] string  token,
+        [Body]      NewUser user,
+        CancellationToken   cancellationToken = default);
 
     [Put("users/{id}")]
-    public Task UpdateUser([Authorize] string token, string id, [Body] NewUser user);
+    Task UpdateUser(
+        [Authorize] string token,
+        string             id,
+        [Body] NewUser     user,
+        CancellationToken  cancellationToken = default);
 
     [Delete("users/{id}")]
-    public Task DeleteUser([Authorize] string token, string id);
+    Task DeleteUser(
+        [Authorize] string token,
+        string             id,
+        CancellationToken  cancellationToken = default);
 }
