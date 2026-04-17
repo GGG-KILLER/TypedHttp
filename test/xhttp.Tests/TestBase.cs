@@ -22,10 +22,8 @@ public class TestBase
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
 #elif NET9_0
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net90;
-#elif NET10_0
+#elif NET10_0 || NET11_0
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net100;
-#elif NET11_0
-        test.ReferenceAssemblies = ReferenceAssemblies.Net.Net110;
 #endif
         test.TestCode             = inputSource;
         test.TestState.OutputKind = OutputKind.DynamicallyLinkedLibrary;
