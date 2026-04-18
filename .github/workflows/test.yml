@@ -78,7 +78,7 @@ jobs:
       - name: Swap project reference for package
         run: |
           dotnet remove src/xhttp.Sample/xhttp.Sample.csproj reference src/xhttp/xhttp.csproj
-          dotnet add src/xhttp.Sample/xhttp.Sample.csproj package xhttp --prerelease --source $(pwd)/nupkgs
+          dotnet add src/xhttp.Sample/xhttp.Sample.csproj package xhttp --prerelease --source $(pwd)/pkg
       - name: Build Sample with installed package
         run: |
           dotnet build src/xhttp.Sample/xhttp.Sample.csproj \
