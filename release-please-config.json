@@ -22,6 +22,10 @@
         {
           "type": "generic",
           "path": "src/xhttp/ThisVersion.cs"
+        },
+        {
+          "type": "generic",
+          "path": "README.md"
         }
       ]
     }
