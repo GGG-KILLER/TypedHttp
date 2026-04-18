@@ -132,6 +132,7 @@ internal sealed class OptionsAttribute(string route) : Attribute;
 /// </remarks>
 /// <param name="method">
 /// The HTTP method to use when sending the request.
+/// </param>
 /// <param name="route">
 /// The route the request should be made to. <b>SHOULD NOT</b> start with a
 /// slash.
