@@ -11,7 +11,7 @@
       "exclude-paths": [
         ".github",
         ".idea",
-        "src/xhttp.Sample",
+        "src/xhttp.Sample"
       ],
       "extra-files": [
         {
@@ -21,7 +21,7 @@
         },
         {
           "type": "generic",
-          "path": "src/xhttp/ThisVersion.cs",
+          "path": "src/xhttp/ThisVersion.cs"
         }
       ]
     }
