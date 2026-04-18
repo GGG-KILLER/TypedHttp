@@ -1,4 +1,4 @@
-# xHTTP
+# TypedHttp
 
 A strongly typed HTTP client source generator aiming for simplicity, zero extra runtime cost and ease of use. Similar to [Refit](https://github.com/reactiveui/refit), but implemented entirely with Roslyn source generators for maximal performance and full Ahead-of-Time (AOT) compilation compatibility.
 
@@ -6,7 +6,7 @@ A strongly typed HTTP client source generator aiming for simplicity, zero extra 
 
 <!-- x-release-please-start-version -->
 ```bash
-dotnet add package xhttp --version 0.0.0
+dotnet add package TypedHttp --version 0.0.0
 ```
 <!-- x-release-please-end -->
 
@@ -14,21 +14,21 @@ Or add the package reference to your `.csproj`:
 
 <!-- x-release-please-start-version -->
 ```xml
-<PackageReference Include="xhttp" Version="0.0.0">
+<PackageReference Include="TypedHttp" Version="0.0.0">
   <PrivateAssets>all</PrivateAssets>
   <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 </PackageReference>
 ```
 <!-- x-release-please-end -->
 
-> **Requirements**: xhttp is a C# source generator. It requires a compiler that supports source generators — **Visual Studio 2022 17.0+**, **.NET SDK 6.0+**, or **Rider 2021.3+**. The consuming project itself can target any framework (.NET Framework 4.6.1+, .NET Core 2.0+, .NET 5+, etc.).
+> **Requirements**: TypedHttp is a C# source generator. It requires a compiler that supports source generators — **Visual Studio 2022 17.0+**, **.NET SDK 6.0+**, or **Rider 2021.3+**. The consuming project itself can target any framework (.NET Framework 4.6.1+, .NET Core 2.0+, .NET 5+, etc.).
 
 ## Quick Start
 
 Define an interface with the `[Client]` attribute and annotate each method with a request attribute:
 
 ```csharp
-using Xhttp;
+using TypedHttp;
 
 [Client]
 public interface ICrudClient
@@ -65,7 +65,7 @@ public interface ICrudClient
 }
 ```
 
-xhttp generates a `CrudClient` class (the interface name minus the `I` prefix) that implements your interface. Use it like:
+TypedHttp generates a `CrudClient` class (the interface name minus the `I` prefix) that implements your interface. Use it like:
 
 ```csharp
 var httpClient = new HttpClient { BaseAddress = new Uri("https://api.example.com/") };
@@ -134,7 +134,7 @@ Methods must return one of the following async types:
 
 ## JSON Serialization
 
-xhttp uses `System.Text.Json` exclusively. The generated client provides three constructors:
+TypedHttp uses `System.Text.Json` exclusively. The generated client provides three constructors:
 
 1. **`new CrudClient(HttpClient)`** — uses default `JsonSerializerOptions`
 2. **`new CrudClient(HttpClient, JsonSerializerOptions)`** — uses custom options
@@ -153,7 +153,7 @@ xhttp uses `System.Text.Json` exclusively. The generated client provides three c
 
 ## Migrating from Refit
 
-| Refit                   | xhttp                   | Notes                                                         |
+| Refit                   | TypedHttp               | Notes                                                         |
 |-------------------------|-------------------------|---------------------------------------------------------------|
 | `[Get]`, `[Post]`, etc. | `[Get]`, `[Post]`, etc. | Same names                                                    |
 | `[Body]`                | `[Body]`                | Same                                                          |

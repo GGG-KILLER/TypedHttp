@@ -7,8 +7,8 @@ version: 2
 updates:
   - package-ecosystem: dotnet-sdk
     directories:
-      - src/xhttp/*.csproj
-      - test/xhttp.Tests/*.csproj
+      - src/TypedHttp/*.csproj
+      - test/TypedHttp.Tests/*.csproj
     assignees:
       - GGG-KILLER
     commit-message:
@@ -24,7 +24,6 @@ updates:
     commit-message:
       prefix: ci
       include: scope
-    schedule:
     schedule:
       interval: weekly
       day: friday

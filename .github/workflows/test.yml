@@ -46,8 +46,8 @@ jobs:
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           dotnet-version: 10.0.x
-      - name: Pack xhttp
-        run: dotnet pack src/xhttp/xhttp.csproj -c Release -o ./pkg
+      - name: Pack TypedHttp
+        run: dotnet pack src/TypedHttp/TypedHttp.csproj -c Release -o ./pkg
       - name: Upload package artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -74,9 +74,9 @@ jobs:
       - name: Swap project reference for package
         run: |
           ls -lAFh $(pwd)/pkg
-          dotnet remove src/xhttp.Sample/xhttp.Sample.csproj reference src/xhttp/xhttp.csproj
-          dotnet add src/xhttp.Sample/xhttp.Sample.csproj package xhttp --prerelease --source $(pwd)/pkg
+          dotnet remove src/TypedHttp.Sample/TypedHttp.Sample.csproj reference src/TypedHttp/TypedHttp.csproj
+          dotnet add src/TypedHttp.Sample/TypedHttp.Sample.csproj package TypedHttp --prerelease --source $(pwd)/pkg
       - name: Build Sample with installed package
         run: |
-          dotnet build src/xhttp.Sample/xhttp.Sample.csproj \
+          dotnet build src/TypedHttp.Sample/TypedHttp.Sample.csproj \
             -p:TargetFramework=net${{ matrix.dotnet }}

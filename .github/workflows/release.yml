@@ -33,7 +33,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
       - name: Package Libraries
         run: |
-          dotnet pack src/xhttp/ \
+          dotnet pack src/TypedHttp/ \
             --configuration Release \
             --output ./packages \
             --include-symbols

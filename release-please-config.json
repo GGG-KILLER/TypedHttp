@@ -7,21 +7,21 @@
   "include-commit-authors": true,
   "packages": {
     ".": {
-      "package-name": "xhttp",
+      "package-name": "TypedHttp",
       "exclude-paths": [
         ".github",
         ".idea",
-        "src/xhttp.Sample"
+        "src/TypedHttp.Sample"
       ],
       "extra-files": [
         {
           "type": "xml",
-          "path": "src/xhttp/xhttp.csproj",
+          "path": "src/TypedHttp/TypedHttp.csproj",
           "xpath": "//Project/PropertyGroup/Version"
         },
         {
           "type": "generic",
-          "path": "src/xhttp/ThisVersion.cs"
+          "path": "src/TypedHttp/ThisVersion.cs"
         },
         {
           "type": "generic",
