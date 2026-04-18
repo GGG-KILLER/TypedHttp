@@ -5,6 +5,7 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "include-commit-authors": true,
+  "include-component-in-tag": false,
   "packages": {
     ".": {
       "package-name": "TypedHttp",
