@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <RootNamespace>TypedHttp</RootNamespace>
+
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+        <!-- Enable package lockfiles -->
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+        <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryUrl>https://github.com/GGG-KILLER/TypedHttp.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryBranch>main</RepositoryBranch>
+        <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <!-- Package props -->
+    <PropertyGroup>
+        <!-- Allow packing -->
+        <IsPackable>true</IsPackable>
+        <IsPublishable>true</IsPublishable>
+
+        <!-- Package info -->
+        <PackageId>TypedHttp</PackageId>
+        <Authors>GGG</Authors>
+        <Copyright>GGG © 2026</Copyright>
+        <Version>0.0.0</Version>
+        <Description>A strongly typed HTTP client source generator aiming for simplicity, zero extra runtime cost and ease of use. Similar to Refit, but implemented entirely with Roslyn source generators for maximal performance and full Ahead-of-Time (AOT) compilation compatibility.</Description>
+        <PackageTags>http client;typed clients;http;rest</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/GGG-KILLER/TypedHttp</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+        <!-- Packaging settings -->
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <DevelopmentDependency>true</DevelopmentDependency>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="Resources/**"/>
+        <EmbeddedResource Include="Resources/ClientAttributes.cs" Visible="true" LogicalName="ClientAttributes.cs"/>
+        <EmbeddedResource Include="Resources/RequestAttributes.cs" Visible="true" LogicalName="RequestAttributes.cs"/>
+        <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs"/>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Bcl.HashCode"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <Target Name="AddGenerationTimeReferences" AfterTargets="ResolvePackageDependenciesForBuild">
+        <ItemGroup>
+            <None Include="@(ResolvedCompileFileDefinitions)" Pack="true" PackagePath="analyzers/dotnet/cs"/>
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+</Project>

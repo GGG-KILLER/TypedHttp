@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "plugins": ["sentence-case"],
+  "release-type": "simple",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "include-commit-authors": true,
+  "packages": {
+    ".": {
+      "package-name": "TypedHttp",
+      "exclude-paths": [
+        ".github",
+        ".idea",
+        "src/TypedHttp.Sample"
+      ],
+      "extra-files": [
+        {
+          "type": "xml",
+          "path": "src/TypedHttp/TypedHttp.csproj",
+          "xpath": "//Project/PropertyGroup/Version"
+        },
+        {
+          "type": "generic",
+          "path": "src/TypedHttp/ThisVersion.cs"
+        },
+        {
+          "type": "generic",
+          "path": "README.md"
+        }
+      ]
+    }
+  }
+}

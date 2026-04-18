@@ -1,0 +1,107 @@
+name: Test
+
+on:
+  workflow_call:
+  push:
+  pull_request:
+  merge_group: # Needed for PR merge queues
+    types: [ checks_requested ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+            11.0.x
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Run Tests
+        run: dotnet test --no-build
+
+  test-pack:
+    name: Pack
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          dotnet-version: 10.0.x
+      - name: Pack TypedHttp
+        run: dotnet pack src/TypedHttp/TypedHttp.csproj -c Release -o ./pkg
+      - name: Upload package artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-package
+          path: ./pkg
+
+  sample-test:
+    name: Sample Test (.NET ${{ matrix.dotnet }})
+    runs-on: ubuntu-latest
+    needs: test-pack
+    strategy:
+      matrix:
+        dotnet: ['8.0', '9.0', '10.0', '11.0']
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          dotnet-version: ${{ matrix.dotnet }}.x
+      - name: Download package artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: test-package
+          path: ./pkg
+      - name: Swap project reference for package
+        run: |
+          ls -lAFh $(pwd)/pkg
+          local_feed=$(pwd)/pkg
+          cat > ./nuget.config <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="local-artifact" value="${local_feed}" />
+              <add key="nuget" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <packageSource key="local-artifact">
+                <package pattern="TypedHttp" />
+              </packageSource>
+              <packageSource key="nuget">
+                <package pattern="*" />
+              </packageSource>
+            </packageSourceMapping>
+          </configuration>
+          EOF
+          dotnet remove src/TypedHttp.Sample/TypedHttp.Sample.csproj reference src/TypedHttp/TypedHttp.csproj
+          dotnet add src/TypedHttp.Sample/TypedHttp.Sample.csproj package TypedHttp --prerelease
+      - name: Restore Sample
+        run: |
+          dotnet restore src/TypedHttp.Sample/TypedHttp.Sample.csproj \
+            --configfile ./nuget.config \
+            -p:TargetFramework=net${{ matrix.dotnet }}
+      - name: Build Sample with installed package
+        run: |
+          dotnet build src/TypedHttp.Sample/TypedHttp.Sample.csproj \
+            --no-restore \
+            -p:TargetFramework=net${{ matrix.dotnet }}
