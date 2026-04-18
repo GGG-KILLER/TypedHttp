@@ -71,12 +71,9 @@ jobs:
         with:
           name: test-package
           path: ./pkg
-      - name: Add local NuGet source
-        run: |
-          ls -lAFh $(pwd)/pkg
-          dotnet nuget add source $(pwd)/pkg --name local
       - name: Swap project reference for package
         run: |
+          ls -lAFh $(pwd)/pkg
           dotnet remove src/xhttp.Sample/xhttp.Sample.csproj reference src/xhttp/xhttp.csproj
           dotnet add src/xhttp.Sample/xhttp.Sample.csproj package xhttp --prerelease --source $(pwd)/pkg
       - name: Build Sample with installed package
