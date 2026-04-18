@@ -77,7 +77,7 @@ internal sealed class HeaderAttribute(string name) : Attribute;
 /// If a string is supplied, then it will be used as the key, otherwise the the
 /// name of the parameter is used.
 /// </summary>
-[Embedded, Conditional("XHTTP_KEEP_ATTRIBUTES"), AttributeUsage(AttributeTargets.Parameter, AllowMultiple = true)]
+[Embedded, Conditional("XHTTP_KEEP_ATTRIBUTES"), AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
 internal sealed class PropertyAttribute : Attribute
 {
     /// <summary>
@@ -105,4 +105,4 @@ internal sealed class PropertyAttribute : Attribute
 /// The authorization scheme to use (e.g.: <code>"Bearer"</code>).
 /// </param>
 [Embedded, Conditional("XHTTP_KEEP_ATTRIBUTES"), AttributeUsage(AttributeTargets.Parameter)]
-internal class AuthorizeAttribute(string scheme = "Bearer") : Attribute;
+internal sealed class AuthorizeAttribute(string scheme = "Bearer") : Attribute;
