@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0C88DD14-F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedHttp.Tests", "test\TypedHttp.Tests\TypedHttp.Tests.csproj", "{133AB889-CA42-4937-8C4E-9A625C9E7DD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedHttp.RuntimeIntegrationTests", "test\TypedHttp.RuntimeIntegrationTests\TypedHttp.RuntimeIntegrationTests.csproj", "{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,18 @@ Global
 		{133AB889-CA42-4937-8C4E-9A625C9E7DD8}.Release|x64.Build.0 = Release|Any CPU
 		{133AB889-CA42-4937-8C4E-9A625C9E7DD8}.Release|x86.ActiveCfg = Release|Any CPU
 		{133AB889-CA42-4937-8C4E-9A625C9E7DD8}.Release|x86.Build.0 = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|x64.Build.0 = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Debug|x86.Build.0 = Debug|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|x64.ActiveCfg = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|x64.Build.0 = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +80,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4A577C4B-81CC-4BA0-8600-37A38996BFF8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{133AB889-CA42-4937-8C4E-9A625C9E7DD8} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
+		{C9F6E61A-1AE4-4D98-8DF8-7F69D2E98F41} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{F2D21AFF-C233-4020-8057-2442A36597AD} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
