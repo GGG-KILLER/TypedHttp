@@ -6,7 +6,7 @@ A strongly typed HTTP client source generator aiming for simplicity, zero extra 
 
 <!-- x-release-please-start-version -->
 ```bash
-dotnet add package TypedHttp --version 0.0.0
+dotnet add package TypedHttp --version 0.1.0
 ```
 <!-- x-release-please-end -->
 
@@ -14,7 +14,7 @@ Or add the package reference to your `.csproj`:
 
 <!-- x-release-please-start-version -->
 ```xml
-<PackageReference Include="TypedHttp" Version="0.0.0">
+<PackageReference Include="TypedHttp" Version="0.1.0">
   <PrivateAssets>all</PrivateAssets>
   <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 </PackageReference>
