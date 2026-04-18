@@ -34,7 +34,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
 
                         if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
-                        currentKind = ~currentKind;
+                        currentKind = TemplatePartKind.Parameter;
                         currentValue.Clear();
                     }
                     // If it is an escaped {{, we append both { and move on
@@ -45,7 +45,10 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                         currentValue.Append(ch);
                         index++;
                     }
-                    else { throw new FormatException("Unclosed { in template string."); }
+                    else
+                    {
+                        throw new FormatException("Unclosed { in template string.");
+                    }
                     break;
 
                 // Same logic as above but simpler since we don't accept any
@@ -53,7 +56,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                 case TemplatePartKind.Parameter when ch == '}':
                     parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
-                    currentKind = ~currentKind;
+                    currentKind = TemplatePartKind.String;
                     currentValue.Clear();
                     break;
 
@@ -95,5 +98,5 @@ internal enum TemplatePartKind
     /// <summary>
     /// A parameter that will be interpolated into the string.
     /// </summary>
-    Parameter = ~String,
+    Parameter = 1,
 }
