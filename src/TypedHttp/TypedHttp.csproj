@@ -37,7 +37,7 @@
         <PackageId>TypedHttp</PackageId>
         <Authors>GGG</Authors>
         <Copyright>GGG © 2026</Copyright>
-        <Version>0.0.0</Version>
+        <Version>0.1.0</Version>
         <Description>A strongly typed HTTP client source generator aiming for simplicity, zero extra runtime cost and ease of use. Similar to Refit, but implemented entirely with Roslyn source generators for maximal performance and full Ahead-of-Time (AOT) compilation compatibility.</Description>
         <PackageTags>http client;typed clients;http;rest</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
