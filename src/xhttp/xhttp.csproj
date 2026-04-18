@@ -11,15 +11,15 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
 
         <!-- Enable package lockfiles -->
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 
         <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <RepositoryUrl>https://github.com/GGG-KILLER/xhttp</RepositoryUrl>
+        <RepositoryUrl>https://github.com/GGG-KILLER/xhttp.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <RepositoryBranch>main</RepositoryBranch>
         <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
@@ -39,12 +39,15 @@
         <Copyright>GGG © 2026</Copyright>
         <Version>0.0.0</Version>
         <Description>An HTTP client generator similar to Refit but implemented entirely in Source Generators for maximal performance and full Ahead-of-Time Compilation compatibility.</Description>
-
-        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>http client;typed clients;http;rest</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageProjectUrl>https://github.com/GGG-KILLER/xhttp</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+        <!-- Packaging settings -->
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <DevelopmentDependency>true</DevelopmentDependency>
     </PropertyGroup>
 
     <ItemGroup>
@@ -56,13 +59,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
         <PackageReference Include="Microsoft.Bcl.HashCode"/>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all"/>
     </ItemGroup>
 
     <Target Name="AddGenerationTimeReferences" AfterTargets="ResolvePackageDependenciesForBuild">
