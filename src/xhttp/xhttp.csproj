@@ -47,30 +47,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Resources/**" />
-        <EmbeddedResource Include="Resources/ClientAttributes.cs" Visible="true" LogicalName="ClientAttributes.cs" />
-        <EmbeddedResource Include="Resources/RequestAttributes.cs" Visible="true" LogicalName="RequestAttributes.cs" />
-        <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs" />
+        <Compile Remove="Resources/**"/>
+        <EmbeddedResource Include="Resources/ClientAttributes.cs" Visible="true" LogicalName="ClientAttributes.cs"/>
+        <EmbeddedResource Include="Resources/RequestAttributes.cs" Visible="true" LogicalName="RequestAttributes.cs"/>
+        <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-        <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+        <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="Microsoft.Bcl.HashCode"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
     </ItemGroup>
 
     <Target Name="AddGenerationTimeReferences" AfterTargets="ResolvePackageDependenciesForBuild">
         <ItemGroup>
-            <None Include="@(ResolvedCompileFileDefinitions)" Pack="true" PackagePath="analyzers/dotnet/cs" />
+            <None Include="@(ResolvedCompileFileDefinitions)" Pack="true" PackagePath="analyzers/dotnet/cs"/>
         </ItemGroup>
     </Target>
 
     <ItemGroup>
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
     </ItemGroup>
 
 </Project>
