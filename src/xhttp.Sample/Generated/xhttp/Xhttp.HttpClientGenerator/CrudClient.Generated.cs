@@ -28,57 +28,57 @@ namespace Xhttp.Sample
             this.___jsonContext = jsonContext;
         }
 
-        public async global::System.Threading.Tasks.Task<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>> GetAllUsers(string token)
+        public async global::System.Threading.Tasks.Task<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>> GetAllUsers(string token, global::System.Threading.CancellationToken cancellationToken)
         {
             var ___route = "users";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
             {
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
-                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();
                     if (this.___jsonContext is not null)
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>) this.___jsonContext.GetTypeInfo(typeof(global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>))).ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>) this.___jsonContext.GetTypeInfo(typeof(global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>)), cancellationToken).ConfigureAwait(false);
                     }
                     else if (this.___jsonOptions is not null)
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>(this.___jsonOptions).ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>(this.___jsonOptions, cancellationToken).ConfigureAwait(false);
                     }
                     else
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>().ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::System.Collections.Immutable.ImmutableArray<global::Xhttp.Sample.User>>(cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
         }
 
-        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> GetById(string token, string id)
+        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> GetById(string token, string id, global::System.Threading.CancellationToken cancellationToken)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
             {
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
-                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();
                     if (this.___jsonContext is not null)
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User)), cancellationToken).ConfigureAwait(false);
                     }
                     else if (this.___jsonOptions is not null)
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions).ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions, cancellationToken).ConfigureAwait(false);
                     }
                     else
                     {
-                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>().ConfigureAwait(false);
+                        return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
         }
 
-        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> CreateUser(string token, global::Xhttp.Sample.NewUser user)
+        public async global::System.Threading.Tasks.Task<global::Xhttp.Sample.User> CreateUser(string token, global::Xhttp.Sample.NewUser user, global::System.Threading.CancellationToken cancellationToken)
         {
             var ___route = "users";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route))
@@ -96,27 +96,27 @@ namespace Xhttp.Sample
                 using (___httpContent)
                 {
                     ___request.Content = ___httpContent;
-                    using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                    using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                     {
                         ___response.EnsureSuccessStatusCode();
                         if (this.___jsonContext is not null)
                         {
-                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User))).ConfigureAwait(false);
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Xhttp.Sample.User>) this.___jsonContext.GetTypeInfo(typeof(global::Xhttp.Sample.User)), cancellationToken).ConfigureAwait(false);
                         }
                         else if (this.___jsonOptions is not null)
                         {
-                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions).ConfigureAwait(false);
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(this.___jsonOptions, cancellationToken).ConfigureAwait(false);
                         }
                         else
                         {
-                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>().ConfigureAwait(false);
+                            return await ___response.Content.ReadFromJsonAsync<global::Xhttp.Sample.User>(cancellationToken).ConfigureAwait(false);
                         }
                     }
                 }
             }
         }
 
-        public async global::System.Threading.Tasks.Task UpdateUser(string token, string id, global::Xhttp.Sample.NewUser user)
+        public async global::System.Threading.Tasks.Task UpdateUser(string token, string id, global::Xhttp.Sample.NewUser user, global::System.Threading.CancellationToken cancellationToken)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Put, ___route))
@@ -134,7 +134,7 @@ namespace Xhttp.Sample
                 using (___httpContent)
                 {
                     ___request.Content = ___httpContent;
-                    using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                    using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                     {
                         ___response.EnsureSuccessStatusCode();
                     }
@@ -142,13 +142,13 @@ namespace Xhttp.Sample
             }
         }
 
-        public async global::System.Threading.Tasks.Task DeleteUser(string token, string id)
+        public async global::System.Threading.Tasks.Task DeleteUser(string token, string id, global::System.Threading.CancellationToken cancellationToken)
         {
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Delete, ___route))
             {
                 ___request.Headers.Add("Authorization", $"Bearer {token}");
-                using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();
                 }
