@@ -74,9 +74,34 @@ jobs:
       - name: Swap project reference for package
         run: |
           ls -lAFh $(pwd)/pkg
+          local_feed=$(pwd)/pkg
+          cat > ./nuget.config <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="local-artifact" value="${local_feed}" />
+              <add key="nuget" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+            <packageSourceMapping>
+              <packageSource key="local-artifact">
+                <package pattern="TypedHttp" />
+              </packageSource>
+              <packageSource key="nuget">
+                <package pattern="*" />
+              </packageSource>
+            </packageSourceMapping>
+          </configuration>
+          EOF
           dotnet remove src/TypedHttp.Sample/TypedHttp.Sample.csproj reference src/TypedHttp/TypedHttp.csproj
-          dotnet add src/TypedHttp.Sample/TypedHttp.Sample.csproj package TypedHttp --prerelease --source $(pwd)/pkg
+          dotnet add src/TypedHttp.Sample/TypedHttp.Sample.csproj package TypedHttp --prerelease
+      - name: Restore Sample
+        run: |
+          dotnet restore src/TypedHttp.Sample/TypedHttp.Sample.csproj \
+            --configfile ./nuget.config \
+            -p:TargetFramework=net${{ matrix.dotnet }}
       - name: Build Sample with installed package
         run: |
           dotnet build src/TypedHttp.Sample/TypedHttp.Sample.csproj \
+            --no-restore \
             -p:TargetFramework=net${{ matrix.dotnet }}
