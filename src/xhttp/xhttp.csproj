@@ -40,6 +40,7 @@
         <Version>0.0.0</Version>
         <Description>An HTTP client generator similar to Refit but implemented entirely in Source Generators for maximal performance and full Ahead-of-Time Compilation compatibility.</Description>
 
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>http client;typed clients;http;rest</PackageTags>
         <PackageProjectUrl>https://github.com/GGG-KILLER/xhttp</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -51,6 +52,7 @@
         <EmbeddedResource Include="Resources/ClientAttributes.cs" Visible="true" LogicalName="ClientAttributes.cs"/>
         <EmbeddedResource Include="Resources/RequestAttributes.cs" Visible="true" LogicalName="RequestAttributes.cs"/>
         <EmbeddedResource Include="Resources/ParameterAttributes.cs" Visible="true" LogicalName="ParameterAttributes.cs"/>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
