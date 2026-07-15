@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/GGG-KILLER/TypedHttp/compare/v0.1.0...v0.1.1) (2026-07-15)
+
+
+### Features
+
+* Implement Result and Result&lt;T&gt; types. ([f2d97fb](https://github.com/GGG-KILLER/TypedHttp/commit/f2d97fbd7615fafd45bb9fca51d441d37b189d68))
+
 ## 0.1.0 (2026-04-18)
 
 

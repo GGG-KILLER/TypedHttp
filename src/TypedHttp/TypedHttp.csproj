@@ -32,7 +32,7 @@
         <PackageId>TypedHttp</PackageId>
         <Authors>GGG</Authors>
         <Copyright>GGG © 2026</Copyright>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
         <Description>A strongly typed HTTP client source generator aiming for simplicity, zero extra runtime cost and ease of use. Similar to Refit, but implemented entirely with Roslyn source generators for maximal performance and full Ahead-of-Time (AOT) compilation compatibility.</Description>
         <PackageTags>http client;typed clients;http;rest</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -66,16 +66,8 @@
 
     <!-- Packaged Files -->
     <ItemGroup>
-        <None Include="$(OutputPath)\$(AssemblyName).dll"
-              Pack="true"
-              PackagePath="analyzers/dotnet/cs"
-              Visible="false"/>
-        <Content Include="$(PkgMicrosoft_Bcl_HashCode)/lib/netstandard2.0/Microsoft.Bcl.HashCode.dll"
-                 CopyToOutputDirectory="PreserveNewest"
-                 Link="Microsoft.Bcl.HashCode.dll"
-                 Pack="true"
-                 PackagePath="analyzers/dotnet/cs"
-                 Visible="false"/>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <Content Include="$(PkgMicrosoft_Bcl_HashCode)/lib/netstandard2.0/Microsoft.Bcl.HashCode.dll" CopyToOutputDirectory="PreserveNewest" Link="Microsoft.Bcl.HashCode.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 

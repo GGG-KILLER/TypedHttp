@@ -9,9 +9,9 @@ namespace TypedHttp;
 //       OR ELSEWHERE, THIS WILL NOT BE UPDATED AND MESS UP OUR CODE GENERATION.
 internal static class ThisVersion
 {
-    public const string Version     = "0.1.0";      // x-release-please-version
+    public const string Version     = "0.1.1";      // x-release-please-version
     public const int    Major       = 0;            // x-release-please-major
     public const int    Minor       = 1;            // x-release-please-minor
-    public const int    Patch       = 0;            // x-release-please-patch
-    public const string ReleaseDate = "2026-04-18"; // x-release-please-date
+    public const int    Patch       = 1;            // x-release-please-patch
+    public const string ReleaseDate = "2026-07-15"; // x-release-please-date
 }
