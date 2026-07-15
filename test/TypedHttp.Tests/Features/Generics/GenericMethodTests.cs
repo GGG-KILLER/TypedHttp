@@ -62,18 +62,20 @@ public class GenericMethodTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  T ___deserializedJson;
                                   if (this.___jsonContext is not null)
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<T>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>) this.___jsonContext.GetTypeInfo(typeof(T))).ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>) this.___jsonContext.GetTypeInfo(typeof(T))).ConfigureAwait(false);
                                   }
                                   else if (this.___jsonOptions is not null)
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<T>(this.___jsonOptions).ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>(this.___jsonOptions).ConfigureAwait(false);
                                   }
                                   else
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
                                   }
+                                  return ___deserializedJson;
                               }
                           }
                       }
@@ -235,18 +237,20 @@ public class GenericMethodTests : TestBase
                                   using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                                   {
                                       ___response.EnsureSuccessStatusCode();
+                                      TResult ___deserializedJson;
                                       if (this.___jsonContext is not null)
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<TResult>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<TResult>) this.___jsonContext.GetTypeInfo(typeof(TResult))).ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<TResult>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<TResult>) this.___jsonContext.GetTypeInfo(typeof(TResult))).ConfigureAwait(false);
                                       }
                                       else if (this.___jsonOptions is not null)
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<TResult>(this.___jsonOptions).ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<TResult>(this.___jsonOptions).ConfigureAwait(false);
                                       }
                                       else
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<TResult>().ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<TResult>().ConfigureAwait(false);
                                       }
+                                      return ___deserializedJson;
                                   }
                               }
                           }

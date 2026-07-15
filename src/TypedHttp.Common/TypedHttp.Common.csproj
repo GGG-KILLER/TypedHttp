@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <RootNamespace>TypedHttp</RootNamespace>
+
+        <!-- Enable package lockfiles -->
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+        <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryUrl>https://github.com/GGG-KILLER/TypedHttp.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryBranch>main</RepositoryBranch>
+    </PropertyGroup>
+
+    <!-- Package props -->
+    <PropertyGroup>
+        <!-- Allow packing -->
+        <IsPackable>true</IsPackable>
+        <IsPublishable>true</IsPublishable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Package info -->
+        <PackageId>TypedHttp.Common</PackageId>
+        <Authors>GGG</Authors>
+        <Copyright>GGG © 2026</Copyright>
+        <Version>0.1.0</Version>
+        <Description>Library with shared types, exceptions and other things for TypedHttp.</Description>
+        <PackageTags>http client;typed clients;http;rest</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/GGG-KILLER/TypedHttp</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="All"/>
+    </ItemGroup>
+
+</Project>

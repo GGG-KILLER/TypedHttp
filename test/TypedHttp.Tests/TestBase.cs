@@ -15,7 +15,10 @@ public class TestBase
 
     protected static string CSharp([StringSyntax("C#")] string code) { return code; }
 
-    protected static Task TestGenerator(string inputSource, (string filename, string content) expectedOutput)
+    protected static Task TestGenerator(
+        string                          inputSource,
+        (string filename, string content) expectedOutput,
+        bool                            referenceCommon = false)
     {
         var test = new CSharpSourceGeneratorTest<HttpClientGenerator, DefaultVerifier>();
 #if NET8_0
@@ -27,6 +30,11 @@ public class TestBase
 #endif
         test.TestCode             = inputSource;
         test.TestState.OutputKind = OutputKind.DynamicallyLinkedLibrary;
+        // Only referenced by tests that actually need TypedHttp.Response/Response<T> to resolve.
+        // Left out by default so the rest of the suite keeps covering the case where a consumer
+        // hasn't referenced TypedHttp.Common at all - the generator must not crash for those.
+        if (referenceCommon)
+            test.TestState.AdditionalReferences.Add(typeof(Response).Assembly);
         test.TestState.GeneratedSources.Add(
             (typeof(HttpClientGenerator), "Microsoft.CodeAnalysis.EmbeddedAttribute.cs",
              """

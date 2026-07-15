@@ -25,6 +25,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\TypedHttp\TypedHttp.csproj"/>
+        <ProjectReference Include="..\..\src\TypedHttp.Common\TypedHttp.Common.csproj"/>
     </ItemGroup>
 
 

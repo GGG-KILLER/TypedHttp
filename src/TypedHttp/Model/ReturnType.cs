@@ -8,10 +8,14 @@ namespace TypedHttp.Model;
 /// <param name="InnerType">
 /// The inner (T in Task&lt;T&gt;) return type's fully qualified name.
 /// </param>
+/// <param name="InnerInnerType">
+/// The inner inner (T in Task&lt;Response&lt;T&gt;&gt;) return type's fully qualified name.
+/// </param>
 internal sealed record ReturnType(
     ReturnTypeKind Kind,
     string         Type,
-    string?        InnerType)
+    string?        InnerType,
+    string?        InnerInnerType)
 {
     public bool NeedsUndisposedResponse => Kind is ReturnTypeKind.HttpResponseMessage or ReturnTypeKind.Stream;
 }
@@ -26,6 +30,16 @@ internal enum ReturnTypeKind
     /// and response disposal.
     /// </summary>
     HttpResponseMessage,
+
+    /// <summary>
+    /// Our own specialized Response type.
+    /// </summary>
+    Response,
+
+    /// <summary>
+    /// Our own specialized Response&lt;T&gt; type.
+    /// </summary>
+    ResponseOfT,
 
     /// <summary>
     /// Plain string contents. Ensure success status code, read as a string and

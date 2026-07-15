@@ -66,4 +66,8 @@ public interface IFeatureClient
     // Custom [Authorize] scheme
     [Get("feature/auth-echo")]
     Task<string> AuthEcho([Authorize("Token")] string token, CancellationToken cancellationToken = default);
+
+    // Response<T>: must not throw on non-success status codes.
+    [Get("feature/response/{id}")]
+    Task<Response<FeatureUser>> GetUserResponse(string id, CancellationToken cancellationToken = default);
 }

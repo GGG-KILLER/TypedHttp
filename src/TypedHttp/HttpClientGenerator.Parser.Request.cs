@@ -52,13 +52,14 @@ public partial class HttpClientGenerator
 
             var returnType = ParseReturnType(method);
 
-            return new Request(Name: GetMethodName(method),
-                               Method: httpMethod,
-                               Route: route,
-                               Headers: headers.DrainToImmutable().ByVal(),
-                               Parameters: parameters.ToImmutable().ByVal(),
-                               ReturnType: returnType,
-                               Diagnostics: ImmutableArray<Diagnostic>.Empty.ByVal());
+            return new Request(
+                Name: GetMethodName(method),
+                Method: httpMethod,
+                Route: route,
+                Headers: headers.DrainToImmutable().ByVal(),
+                Parameters: parameters.ToImmutable().ByVal(),
+                ReturnType: returnType,
+                Diagnostics: ImmutableArray<Diagnostic>.Empty.ByVal());
         }
 
         private static readonly SymbolDisplayFormat s_methodNameFormat =
@@ -101,7 +102,7 @@ public partial class HttpClientGenerator
         private ReturnType ParseReturnType(IMethodSymbol method)
         {
             ReturnTypeKind returnKind;
-            string?        innerTypeStr  = null;
+            string?        innerTypeStr  = null, innerInnerTypeStr = null;
             var            isAsync       = false;
             var            returnType    = method.ReturnType;
             var            returnTypeStr = returnType.ToDisplayString(s_fullTypeFormat);
@@ -133,6 +134,22 @@ public partial class HttpClientGenerator
                 innerTypeStr = returnType.ToDisplayString(s_fullTypeFormat);
             }
 
+            // Check for Response
+            if (SymbolEqualityComparer.Default.Equals(returnType, _knownSymbols.Response))
+            {
+                returnKind = ReturnTypeKind.Response;
+                goto end;
+            }
+
+            // Check for Response<T>
+            if (returnType is INamedTypeSymbol { TypeArguments.Length: 1 } responseNamedType
+             && SymbolEqualityComparer.Default.Equals(responseNamedType.OriginalDefinition, _knownSymbols.ResponseOfT))
+            {
+                returnKind        = ReturnTypeKind.ResponseOfT;
+                innerInnerTypeStr = responseNamedType.TypeArguments[0].ToDisplayString(s_fullTypeFormat);
+                goto end;
+            }
+
             // Check for HttpResponseMessage
             if (SymbolEqualityComparer.Default.Equals(returnType, _knownSymbols.HttpResponseMessage))
             {
@@ -159,7 +176,7 @@ public partial class HttpClientGenerator
 
         end:
             // TODO: non-async error diagnostic
-            return new ReturnType(returnKind, returnTypeStr, innerTypeStr);
+            return new ReturnType(returnKind, returnTypeStr, innerTypeStr, innerInnerTypeStr);
         }
     }
 }

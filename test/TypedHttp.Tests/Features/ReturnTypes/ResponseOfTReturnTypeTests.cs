@@ -3,10 +3,10 @@ using Xunit;
 
 namespace TypedHttp.Tests.Features.ReturnTypes;
 
-public class CustomJsonReturnTypeTests : TestBase
+public class ResponseOfTReturnTypeTests : TestBase
 {
     [Fact]
-    public async Task Generator_GeneratesCustomJsonReturnTypeCorrectly()
+    public async Task Generator_GeneratesResponseOfTReturnTypeCorrectly()
     {
         var source = CSharp(
             """
@@ -19,7 +19,7 @@ public class CustomJsonReturnTypeTests : TestBase
             public interface ICustomClient
             {
                 [Get("users")]
-                Task<User> GetUser();
+                Task<Response<User>> GetUser();
             }
 
             public class User { }
@@ -56,28 +56,30 @@ public class CustomJsonReturnTypeTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.Task<global::X.User> GetUser()
+                      public async global::System.Threading.Tasks.Task<global::TypedHttp.Response<global::X.User>> GetUser()
                       {
                           var ___route = "users";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
-                                  ___response.EnsureSuccessStatusCode();
-                                  global::X.User ___deserializedJson;
-                                  if (this.___jsonContext is not null)
+                                  global::X.User ___deserializedJson = default!;
+                                  if (___response.IsSuccessStatusCode)
                                   {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
+                                      if (this.___jsonContext is not null)
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
+                                      }
+                                      else if (this.___jsonOptions is not null)
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
+                                      }
+                                      else
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
+                                      }
                                   }
-                                  else if (this.___jsonOptions is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
-                                  }
-                                  else
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
-                                  }
-                                  return ___deserializedJson;
+                                  return global::TypedHttp.Response<global::X.User>.FromMessage(___response, ___deserializedJson);
                               }
                           }
                       }
@@ -86,11 +88,11 @@ public class CustomJsonReturnTypeTests : TestBase
 
               """);
 
-        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
+        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput), referenceCommon: true);
     }
 
     [Fact]
-    public async Task Generator_GeneratesValueTaskOfTReturnTypeCorrectly()
+    public async Task Generator_GeneratesValueTaskOfResponseOfTReturnTypeCorrectly()
     {
         var source = CSharp(
             """
@@ -103,7 +105,7 @@ public class CustomJsonReturnTypeTests : TestBase
             public interface ICustomClient
             {
                 [Get("users")]
-                ValueTask<User> GetUser();
+                ValueTask<Response<User>> GetUser();
             }
 
             public class User { }
@@ -140,28 +142,30 @@ public class CustomJsonReturnTypeTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.ValueTask<global::X.User> GetUser()
+                      public async global::System.Threading.Tasks.ValueTask<global::TypedHttp.Response<global::X.User>> GetUser()
                       {
                           var ___route = "users";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
-                                  ___response.EnsureSuccessStatusCode();
-                                  global::X.User ___deserializedJson;
-                                  if (this.___jsonContext is not null)
+                                  global::X.User ___deserializedJson = default!;
+                                  if (___response.IsSuccessStatusCode)
                                   {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
+                                      if (this.___jsonContext is not null)
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
+                                      }
+                                      else if (this.___jsonOptions is not null)
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
+                                      }
+                                      else
+                                      {
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
+                                      }
                                   }
-                                  else if (this.___jsonOptions is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
-                                  }
-                                  else
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
-                                  }
-                                  return ___deserializedJson;
+                                  return global::TypedHttp.Response<global::X.User>.FromMessage(___response, ___deserializedJson);
                               }
                           }
                       }
@@ -170,6 +174,6 @@ public class CustomJsonReturnTypeTests : TestBase
 
               """);
 
-        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
+        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput), referenceCommon: true);
     }
 }

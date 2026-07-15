@@ -192,12 +192,23 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
         var cts1Str = ctsParam is not null ? ctsParam.Name : string.Empty;
         var cts2Str = ctsParam is not null ? $", {ctsParam.Name}" : string.Empty;
 
-        if (ret.Kind != ReturnTypeKind.HttpResponseMessage)
+        if (ret.Kind is not (ReturnTypeKind.Response or ReturnTypeKind.ResponseOfT or ReturnTypeKind.HttpResponseMessage))
             Writer.WriteLine($"{Names.ResponseVar}.EnsureSuccessStatusCode();");
 
         switch (ret.Kind)
         {
             case ReturnTypeKind.HttpResponseMessage: Writer.WriteLine($"return {Names.ResponseVar};"); break;
+            case ReturnTypeKind.Response:
+                Writer.WriteLine($"return {Types.Response}.FromMessage({Names.ResponseVar});");
+                break;
+            case ReturnTypeKind.ResponseOfT:
+                Writer.WriteLine($"{ret.InnerInnerType} {Names.DeserializedJsonVar} = default!;");
+                Writer.WriteLine($"if ({Names.ResponseVar}.IsSuccessStatusCode)");
+                using (Writer.Indent())
+                    writeJsonDeserialization(ret.InnerInnerType!);
+                Writer.WriteLine(
+                    $"return {Types.Response}<{ret.InnerInnerType}>.FromMessage({Names.ResponseVar}, {Names.DeserializedJsonVar});");
+                break;
             case ReturnTypeKind.String:
                 // TODO: Check for CancellationToken compatibility
                 Writer.WriteLine(
@@ -209,27 +220,34 @@ internal sealed class RequestWriter(IndentedTextWriter writer) : BaseWriter(writ
                     $"return await {Names.ResponseVar}.Content.ReadAsStreamAsync({cts1Str}).ConfigureAwait(false);");
                 break;
             case ReturnTypeKind.Custom:
-                Writer.WriteLine($"if (this.{Names.JsonContextField} is not null)");
-                using (Writer.Indent())
-                {
-                    var arg1 =
-                        $"({Types.JsonTypeInfo}<{ret.InnerType}>) this.{Names.JsonContextField}.GetTypeInfo(typeof({ret.InnerType}))";
-                    Writer.WriteLine(
-                        $"return await {Names.ResponseVar}.Content.ReadFromJsonAsync<{ret.InnerType}>({arg1}{cts2Str}).ConfigureAwait(false);");
-                }
-                Writer.WriteLine($"else if (this.{Names.JsonOptionsField} is not null)");
-                using (Writer.Indent())
-                    Writer.WriteLine(
-                        $"return await {Names.ResponseVar}.Content.ReadFromJsonAsync<{ret.InnerType}>(this.{Names.JsonOptionsField}{cts2Str}).ConfigureAwait(false);");
-                Writer.WriteLine("else");
-                using (Writer.Indent())
-                    Writer.WriteLine(
-                        $"return await {Names.ResponseVar}.Content.ReadFromJsonAsync<{ret.InnerType}>({cts1Str}).ConfigureAwait(false);");
+                Writer.WriteLine($"{ret.InnerType} {Names.DeserializedJsonVar};");
+                writeJsonDeserialization(ret.InnerType!);
+                Writer.WriteLine($"return {Names.DeserializedJsonVar};");
                 break;
             case ReturnTypeKind.Void:
                 // do nothing
                 break;
             default: throw new InvalidOperationException($"Invalid return type: {ret.Kind}");
+        }
+
+        void writeJsonDeserialization(string jsonType)
+        {
+            Writer.WriteLine($"if (this.{Names.JsonContextField} is not null)");
+            using (Writer.Indent())
+            {
+                var arg1 =
+                    $"({Types.JsonTypeInfo}<{jsonType}>) this.{Names.JsonContextField}.GetTypeInfo(typeof({jsonType}))";
+                Writer.WriteLine(
+                    $"{Names.DeserializedJsonVar} = await {Names.ResponseVar}.Content.ReadFromJsonAsync<{jsonType}>({arg1}{cts2Str}).ConfigureAwait(false);");
+            }
+            Writer.WriteLine($"else if (this.{Names.JsonOptionsField} is not null)");
+            using (Writer.Indent())
+                Writer.WriteLine(
+                    $"{Names.DeserializedJsonVar} = await {Names.ResponseVar}.Content.ReadFromJsonAsync<{jsonType}>(this.{Names.JsonOptionsField}{cts2Str}).ConfigureAwait(false);");
+            Writer.WriteLine("else");
+            using (Writer.Indent())
+                Writer.WriteLine(
+                    $"{Names.DeserializedJsonVar} = await {Names.ResponseVar}.Content.ReadFromJsonAsync<{jsonType}>({cts1Str}).ConfigureAwait(false);");
         }
     }
 }

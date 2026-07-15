@@ -3,10 +3,10 @@ using Xunit;
 
 namespace TypedHttp.Tests.Features.ReturnTypes;
 
-public class CustomJsonReturnTypeTests : TestBase
+public class ResponseReturnTypeTests : TestBase
 {
     [Fact]
-    public async Task Generator_GeneratesCustomJsonReturnTypeCorrectly()
+    public async Task Generator_GeneratesResponseReturnTypeCorrectly()
     {
         var source = CSharp(
             """
@@ -19,10 +19,8 @@ public class CustomJsonReturnTypeTests : TestBase
             public interface ICustomClient
             {
                 [Get("users")]
-                Task<User> GetUser();
+                Task<Response> GetStatus();
             }
-
-            public class User { }
             """);
         var expectedOutput = CSharp(
             $$"""
@@ -56,28 +54,14 @@ public class CustomJsonReturnTypeTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.Task<global::X.User> GetUser()
+                      public async global::System.Threading.Tasks.Task<global::TypedHttp.Response> GetStatus()
                       {
                           var ___route = "users";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
-                                  ___response.EnsureSuccessStatusCode();
-                                  global::X.User ___deserializedJson;
-                                  if (this.___jsonContext is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
-                                  }
-                                  else if (this.___jsonOptions is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
-                                  }
-                                  else
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
-                                  }
-                                  return ___deserializedJson;
+                                  return global::TypedHttp.Response.FromMessage(___response);
                               }
                           }
                       }
@@ -86,11 +70,11 @@ public class CustomJsonReturnTypeTests : TestBase
 
               """);
 
-        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
+        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput), referenceCommon: true);
     }
 
     [Fact]
-    public async Task Generator_GeneratesValueTaskOfTReturnTypeCorrectly()
+    public async Task Generator_GeneratesValueTaskOfResponseReturnTypeCorrectly()
     {
         var source = CSharp(
             """
@@ -103,10 +87,8 @@ public class CustomJsonReturnTypeTests : TestBase
             public interface ICustomClient
             {
                 [Get("users")]
-                ValueTask<User> GetUser();
+                ValueTask<Response> GetStatus();
             }
-
-            public class User { }
             """);
         var expectedOutput = CSharp(
             $$"""
@@ -140,28 +122,14 @@ public class CustomJsonReturnTypeTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.ValueTask<global::X.User> GetUser()
+                      public async global::System.Threading.Tasks.ValueTask<global::TypedHttp.Response> GetStatus()
                       {
                           var ___route = "users";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
-                                  ___response.EnsureSuccessStatusCode();
-                                  global::X.User ___deserializedJson;
-                                  if (this.___jsonContext is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
-                                  }
-                                  else if (this.___jsonOptions is not null)
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
-                                  }
-                                  else
-                                  {
-                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
-                                  }
-                                  return ___deserializedJson;
+                                  return global::TypedHttp.Response.FromMessage(___response);
                               }
                           }
                       }
@@ -170,6 +138,79 @@ public class CustomJsonReturnTypeTests : TestBase
 
               """);
 
+        await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput), referenceCommon: true);
+    }
+
+    [Fact]
+    public async Task Generator_DoesNotRequireCommonReference_WhenResponseIsNotUsed()
+    {
+        // TypedHttp.Response/Response<T> live in TypedHttp.Common, an external runtime dependency -
+        // not an embedded resource TypedHttp controls. A client that never returns Response/Response<T>
+        // must still generate correctly even when the consumer hasn't referenced TypedHttp.Common at all.
+        var source = CSharp(
+            """
+            using TypedHttp;
+            using System.Threading.Tasks;
+
+            namespace X;
+
+            [Client]
+            public interface ICustomClient
+            {
+                [Get("users")]
+                Task<string> GetStatus();
+            }
+            """);
+        var expectedOutput = CSharp(
+            $$"""
+              // <auto-generated/>
+              using System.Net.Http.Json;
+
+              namespace X
+              {
+                  // Generated by TypedHttp {{ThisVersion.Version}} released on {{ThisVersion.ReleaseDate}}
+                  [global::System.CodeDom.Compiler.GeneratedCode("TypedHttp", "{{ThisVersion.Version}}")]
+                  public sealed class CustomClient : ICustomClient
+                  {
+                      private readonly global::System.Net.Http.HttpClient ___httpClient;
+                      private readonly global::System.Text.Json.JsonSerializerOptions ___jsonOptions;
+                      private readonly global::System.Text.Json.Serialization.JsonSerializerContext ___jsonContext;
+
+                      public CustomClient(global::System.Net.Http.HttpClient httpClient)
+                      {
+                          this.___httpClient = httpClient;
+                      }
+
+                      public CustomClient(global::System.Net.Http.HttpClient httpClient, global::System.Text.Json.JsonSerializerOptions jsonOptions)
+                      {
+                          this.___httpClient = httpClient;
+                          this.___jsonOptions = jsonOptions;
+                      }
+
+                      public CustomClient(global::System.Net.Http.HttpClient httpClient, global::System.Text.Json.Serialization.JsonSerializerContext jsonContext)
+                      {
+                          this.___httpClient = httpClient;
+                          this.___jsonContext = jsonContext;
+                      }
+
+                      public async global::System.Threading.Tasks.Task<string> GetStatus()
+                      {
+                          var ___route = "users";
+                          using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
+                          {
+                              using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
+                              {
+                                  ___response.EnsureSuccessStatusCode();
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                              }
+                          }
+                      }
+                  }
+              }
+
+              """);
+
+        // referenceCommon defaults to false - this is the point of the test.
         await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
     }
 }

@@ -19,8 +19,11 @@ internal static class Types
     public const string StringBuilder      = "global::System.Text.StringBuilder";
 
     // HTTP Contents
-    public const string HttpContent    = "global::System.Net.Http.HttpContent";
+    public const string HttpContent      = "global::System.Net.Http.HttpContent";
     public const string JsonContent      = "global::System.Net.Http.Json.JsonContent";
     public const string StreamContent    = "global::System.Net.Http.StreamContent";
     public const string ByteArrayContent = "global::System.Net.Http.ByteArrayContent";
+
+    // TypedHttp
+    public const string Response = "global::TypedHttp.Response";
 }

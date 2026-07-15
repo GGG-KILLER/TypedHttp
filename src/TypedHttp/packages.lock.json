@@ -112,6 +112,9 @@
           "System.Runtime.CompilerServices.Unsafe": "6.1.0"
         }
       },
+      "typedhttp.common": {
+        "type": "Project"
+      },
       "Microsoft.CodeAnalysis.Common": {
         "type": "CentralTransitive",
         "requested": "[5.0.0, )",

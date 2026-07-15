@@ -267,4 +267,42 @@ public class GeneratedClientFeatureTests
         var authHeader = await client.AuthEcho("my-token", cancellationToken);
         Assert.Equal("Token my-token", authHeader);
     }
+
+    // ── Response<T> ─────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task FeatureClient_ResponseOfT_SuccessStatus_PopulatesBody()
+    {
+        await using var server            = await MockApiServer.StartAsync();
+        using var       httpClient        = server.CreateHttpClient();
+        var             cancellationToken = TestContext.Current.CancellationToken;
+
+        IFeatureClient client = new FeatureClient(httpClient);
+
+        var response = await client.GetUserResponse("42", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.NotNull(response.Body);
+        Assert.Equal("42", response.Body.Id);
+    }
+
+    [Fact]
+    public async Task FeatureClient_ResponseOfT_NotFoundStatus_DoesNotThrowAndBodyIsDefault()
+    {
+        await using var server            = await MockApiServer.StartAsync();
+        using var       httpClient        = server.CreateHttpClient();
+        var             cancellationToken = TestContext.Current.CancellationToken;
+
+        IFeatureClient client = new FeatureClient(httpClient);
+
+        // The whole point of Response<T> is to let callers inspect non-success responses
+        // without an exception - unlike every other JSON return type, which calls
+        // EnsureSuccessStatusCode() and throws.
+        var response = await client.GetUserResponse("missing", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Null(response.Body);
+    }
 }

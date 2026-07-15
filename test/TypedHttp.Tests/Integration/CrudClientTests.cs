@@ -73,18 +73,20 @@ public class CrudClientTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  global::X.User ___deserializedJson;
                                   if (this.___jsonContext is not null)
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User))).ConfigureAwait(false);
                                   }
                                   else if (this.___jsonOptions is not null)
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions).ConfigureAwait(false);
                                   }
                                   else
                                   {
-                                      return await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>().ConfigureAwait(false);
                                   }
+                                  return ___deserializedJson;
                               }
                           }
                       }
@@ -110,18 +112,20 @@ public class CrudClientTests : TestBase
                                   using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                                   {
                                       ___response.EnsureSuccessStatusCode();
+                                      global::X.User ___deserializedJson;
                                       if (this.___jsonContext is not null)
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User)), cancellationToken).ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::X.User>) this.___jsonContext.GetTypeInfo(typeof(global::X.User)), cancellationToken).ConfigureAwait(false);
                                       }
                                       else if (this.___jsonOptions is not null)
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions, cancellationToken).ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(this.___jsonOptions, cancellationToken).ConfigureAwait(false);
                                       }
                                       else
                                       {
-                                          return await ___response.Content.ReadFromJsonAsync<global::X.User>(cancellationToken).ConfigureAwait(false);
+                                          ___deserializedJson = await ___response.Content.ReadFromJsonAsync<global::X.User>(cancellationToken).ConfigureAwait(false);
                                       }
+                                      return ___deserializedJson;
                                   }
                               }
                           }

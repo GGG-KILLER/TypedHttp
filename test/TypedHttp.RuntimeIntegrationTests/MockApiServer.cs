@@ -277,6 +277,13 @@ public sealed class MockApiServer : IAsyncDisposable
         app.MapGet(
             "/feature/auth-echo",
             (HttpRequest request) => Results.Text(request.Headers.Authorization.ToString(), "text/plain"));
+
+        app.MapGet(
+            "/feature/response/{id}",
+            (string id) =>
+                id == "missing"
+                    ? Results.NotFound()
+                    : Results.Json(new FeatureUser(id, "Response User", "response@example.com")));
     }
 
     private static bool HasBearerToken(HttpRequest request)
