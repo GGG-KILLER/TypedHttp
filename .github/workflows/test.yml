@@ -124,6 +124,7 @@ jobs:
       - name: Swap runtime integration test project reference for package
         run: |
           dotnet remove test/TypedHttp.RuntimeIntegrationTests/TypedHttp.RuntimeIntegrationTests.csproj reference src/TypedHttp/TypedHttp.csproj
+          dotnet remove test/TypedHttp.RuntimeIntegrationTests/TypedHttp.RuntimeIntegrationTests.csproj reference src/TypedHttp.Common/TypedHttp.Common.csproj
           dotnet add test/TypedHttp.RuntimeIntegrationTests/TypedHttp.RuntimeIntegrationTests.csproj package TypedHttp --prerelease
 
       - name: Restore runtime integration tests
