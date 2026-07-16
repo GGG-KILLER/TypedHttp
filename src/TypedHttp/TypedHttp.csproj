@@ -7,6 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AnalysisLevel>latest</AnalysisLevel>
         <RootNamespace>TypedHttp</RootNamespace>
+        <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
 
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
@@ -59,6 +60,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all"/>
+        <PackageReference Include="PolySharp">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\TypedHttp.Common\TypedHttp.Common.csproj"/>

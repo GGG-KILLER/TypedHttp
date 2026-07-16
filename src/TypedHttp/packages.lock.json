@@ -47,6 +47,18 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
+      "PolySharp": {
+        "type": "Direct",
+        "requested": "[1.16.0, )",
+        "resolved": "1.16.0",
+        "contentHash": "3kdIIceBPumwjw279FuiVMfVENT2cGASXJgcigdySsbX2dJB8ofUgG6i47yqF/k1qu6fvNR3csrSekZPviR6kQ=="
+      },
+      "Tsu": {
+        "type": "Direct",
+        "requested": "[4.0.0, )",
+        "resolved": "4.0.0",
+        "contentHash": "J1EmWo4z5OxDkMFsUXFLKj4qCAOxfjP4spIToG2cH8rZHxID1aRnxn/CgR6kN3NZ2rxw4W79hrnI4fKsDfZruQ=="
+      },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
         "resolved": "1.1.0",
