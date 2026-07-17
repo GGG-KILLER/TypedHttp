@@ -20,7 +20,10 @@ namespace TypedHttp.Model;
 internal sealed record Client(
     ImmutableByValArray<string>     Containers,
     string                          Modifiers,
-    string                          Name,
+    string                          Interface,
     ImmutableByValArray<Header>     Headers,
     ImmutableByValArray<Request>    Requests,
-    ImmutableByValArray<Diagnostic> Diagnostics);
+    ImmutableByValArray<Diagnostic> Diagnostics)
+{
+    public string Name { get; } = Interface.Substring(1);
+}

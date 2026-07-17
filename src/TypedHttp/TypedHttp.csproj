@@ -64,6 +64,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Tsu" PrivateAssets="all" GeneratePathProperty="true"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\TypedHttp.Common\TypedHttp.Common.csproj"/>
@@ -78,6 +79,12 @@
         <Content Include="$(PkgMicrosoft_Bcl_HashCode)/lib/netstandard2.0/Microsoft.Bcl.HashCode.dll"
                  CopyToOutputDirectory="PreserveNewest"
                  Link="Microsoft.Bcl.HashCode.dll"
+                 Pack="true"
+                 PackagePath="analyzers/dotnet/cs"
+                 Visible="false"/>
+        <Content Include="$(PkgTsu)/lib/netstandard2.0/Tsu.dll"
+                 CopyToOutputDirectory="PreserveNewest"
+                 Link="Tsu.dll"
                  Pack="true"
                  PackagePath="analyzers/dotnet/cs"
                  Visible="false"/>

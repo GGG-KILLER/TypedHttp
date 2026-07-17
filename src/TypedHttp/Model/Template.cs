@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using Tsu;
 
 namespace TypedHttp.Model;
 
@@ -12,7 +13,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
 
     public static Template Parameter(string name) => new([ new TemplatePart(TemplatePartKind.Parameter, name) ]);
 
-    public static Template Parse(ReadOnlySpan<char> input)
+    public static Result<Template, TemplateError> Parse(ReadOnlySpan<char> input)
     {
         var parts        = ImmutableArray.CreateBuilder<TemplatePart>();
         var currentKind  = TemplatePartKind.String;
@@ -47,7 +48,7 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
                     }
                     else
                     {
-                        throw new FormatException("Unclosed { in template string.");
+                        return Result.Err<Template, TemplateError>(TemplateError.UnclosedBrace);
                     }
                     break;
 
@@ -66,13 +67,20 @@ internal readonly record struct Template(ImmutableByValArray<TemplatePart> Parts
         }
 
         // If we end on a parameter kind, it means there wasn't a closing }
-        if (currentKind == TemplatePartKind.Parameter) throw new FormatException("Unclosed { in template string.");
+        if (currentKind == TemplatePartKind.Parameter)
+            return Result.Err<Template, TemplateError>(TemplateError.UnclosedBrace);
 
         // Submit the last part at the end of the input.
         if (currentValue.Length > 0) parts.Add(new TemplatePart(currentKind, currentValue.ToString()));
 
-        return new Template(new ImmutableByValArray<TemplatePart>(parts.DrainToImmutable()));
+        return Result.Ok<Template, TemplateError>(
+            new Template(new ImmutableByValArray<TemplatePart>(parts.DrainToImmutable())));
     }
+}
+
+internal enum TemplateError
+{
+    UnclosedBrace
 }
 
 /// <summary>

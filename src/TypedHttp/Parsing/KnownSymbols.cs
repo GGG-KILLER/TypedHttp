@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace TypedHttp.Model;
+namespace TypedHttp.Parsing;
 
 internal sealed class KnownSymbols(SemanticModel semanticModel)
 {
