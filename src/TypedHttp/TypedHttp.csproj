@@ -91,4 +91,23 @@
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
+    <!--
+        When this generator is consumed via ProjectReference with OutputItemType="Analyzer"
+        (the sample and the runtime integration tests), MSBuild forwards only this project's own
+        assembly as an analyzer. Its dependencies (Tsu, Microsoft.Bcl.HashCode) must be forwarded
+        too, otherwise the generator throws FileNotFoundException at generation time. NuGet-packaged
+        consumers are handled separately by the analyzers/dotnet/cs entries above.
+    -->
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetGeneratorDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+    <Target Name="GetGeneratorDependencyTargetPaths">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="$(PkgTsu)/lib/netstandard2.0/Tsu.dll"
+                                                 IncludeRuntimeDependency="false"/>
+            <TargetPathWithTargetPlatformMoniker Include="$(PkgMicrosoft_Bcl_HashCode)/lib/netstandard2.0/Microsoft.Bcl.HashCode.dll"
+                                                 IncludeRuntimeDependency="false"/>
+        </ItemGroup>
+    </Target>
+
 </Project>
