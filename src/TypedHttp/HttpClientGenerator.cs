@@ -54,7 +54,7 @@ public class HttpClientGenerator : IIncrementalGenerator
         {
             foreach (var diagnostic in client.Diagnostics)
             {
-                ctx.ReportDiagnostic(diagnostic);
+                ctx.ReportDiagnostic(diagnostic.CreateDiagnostic());
             }
             return;
         }

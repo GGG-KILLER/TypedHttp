@@ -114,9 +114,9 @@ internal static class Diagnostics
     // TODO: │TYPEDHTTP011│3.4  │[Query] on a route-bound parameter                        │Warning → attribute ignored│
     // TODO: │TYPEDHTTP012│9.5  │file-local [Client] interface                             │Error → skip client        │
 
-    public static Diagnostic ForMalformedRoute(Location? location, string name, TemplateError error)
+    public static DiagnosticInfo ForMalformedRoute(Location? location, string name, TemplateError error)
     {
-        return Diagnostic.Create(
+        return DiagnosticInfo.Create(
             MalformedRoute,
             location,
             name,
@@ -127,9 +127,9 @@ internal static class Diagnostics
             });
     }
 
-    public static Diagnostic ForMalformedHeader(Location? location, string methodName, HeaderError error)
+    public static DiagnosticInfo ForMalformedHeader(Location? location, string methodName, HeaderError error)
     {
-        return Diagnostic.Create(
+        return DiagnosticInfo.Create(
             MalformedHeader,
             location,
             methodName,

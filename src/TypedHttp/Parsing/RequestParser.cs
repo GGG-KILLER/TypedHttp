@@ -7,11 +7,11 @@ namespace TypedHttp.Parsing;
 internal sealed class RequestParser
 {
     private readonly KnownSymbols              _knownSymbols;
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+    private readonly ImmutableArray<DiagnosticInfo>.Builder _diagnostics;
 
     public RequestParser(
         KnownSymbols              knownSymbols,
-        ImmutableArray<Diagnostic>.Builder diagnostics)
+        ImmutableArray<DiagnosticInfo>.Builder diagnostics)
     {
         _knownSymbols  = knownSymbols;
         _diagnostics   = diagnostics;
@@ -36,7 +36,7 @@ internal sealed class RequestParser
         if (reqIds.Length == 0)
         {
             _diagnostics.Add(
-                Diagnostic.Create(
+                DiagnosticInfo.Create(
                     Diagnostics.NoRequestMarkerOnMethod,
                     method.Locations.FirstOrDefault(),
                     method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));
@@ -45,7 +45,7 @@ internal sealed class RequestParser
         if (reqIds.Length > 1)
         {
             _diagnostics.Add(
-                Diagnostic.Create(
+                DiagnosticInfo.Create(
                     Diagnostics.MultipleRequestMarkerOnMethod,
                     method.Locations.FirstOrDefault(),
                     method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));
@@ -58,7 +58,6 @@ internal sealed class RequestParser
 
         if (SymbolEqualityComparer.Default.Equals(reqId.AttributeClass, _knownSymbols.Request))
         {
-            // TODO: Validate method.
             httpMethod = (string)reqId.ConstructorArguments[0].Value!;
             route      = parseRoute((string)reqId.ConstructorArguments[1].Value!);
         }
@@ -105,7 +104,7 @@ internal sealed class RequestParser
                 if (parameterNames.Contains(routeParameter)) continue;
 
                 _diagnostics.Add(
-                    Diagnostic.Create(
+                    DiagnosticInfo.Create(
                         Diagnostics.RouteHasUnkownParameter,
                         reqId.ApplicationSyntaxReference?.GetSyntax(cancellationToken).GetLocation(),
                         method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat),

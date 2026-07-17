@@ -15,8 +15,8 @@ internal sealed class ClientParser
     private readonly ISymbol       _targetSymbol;
     private readonly SyntaxNode    _targetNode;
 
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics =
-        ImmutableArray.CreateBuilder<Diagnostic>();
+    private readonly ImmutableArray<DiagnosticInfo>.Builder _diagnostics =
+        ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
     public ClientParser(GeneratorAttributeSyntaxContext context)
     {
@@ -95,7 +95,7 @@ internal sealed class ClientParser
             if (!isPartialType)
             {
                 _diagnostics.Add(
-                    Diagnostic.Create(
+                    DiagnosticInfo.Create(
                         Diagnostics.NonPartialParent,
                         currentType.GetLocation(),
                         containingTypeSymbol!.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));

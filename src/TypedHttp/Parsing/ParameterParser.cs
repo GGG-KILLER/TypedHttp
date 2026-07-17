@@ -7,11 +7,11 @@ namespace TypedHttp.Parsing;
 internal sealed class ParameterParser
 {
     private readonly KnownSymbols              _knownSymbols;
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+    private readonly ImmutableArray<DiagnosticInfo>.Builder _diagnostics;
 
     public ParameterParser(
         KnownSymbols              knownSymbols,
-        ImmutableArray<Diagnostic>.Builder diagnostics)
+        ImmutableArray<DiagnosticInfo>.Builder diagnostics)
     {
         _knownSymbols = knownSymbols;
         _diagnostics  = diagnostics;
@@ -113,7 +113,7 @@ internal sealed class ParameterParser
                 if (body is not null)
                 {
                     _diagnostics.Add(
-                        Diagnostic.Create(
+                        DiagnosticInfo.Create(
                             Diagnostics.MultipleBodyParameters,
                             method.Locations.FirstOrDefault(),
                             method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));

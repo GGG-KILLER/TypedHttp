@@ -7,9 +7,9 @@ namespace TypedHttp.Parsing;
 internal sealed class ReturnTypeParser
 {
     private readonly KnownSymbols              _knownSymbols;
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+    private readonly ImmutableArray<DiagnosticInfo>.Builder _diagnostics;
 
-    public ReturnTypeParser(KnownSymbols knownSymbols, ImmutableArray<Diagnostic>.Builder diagnostics)
+    public ReturnTypeParser(KnownSymbols knownSymbols, ImmutableArray<DiagnosticInfo>.Builder diagnostics)
     {
         _knownSymbols = knownSymbols;
         _diagnostics  = diagnostics;
@@ -24,7 +24,7 @@ internal sealed class ReturnTypeParser
         if (method.ReturnsVoid)
         {
             _diagnostics.Add(
-                Diagnostic.Create(
+                DiagnosticInfo.Create(
                     Diagnostics.NonAsyncReturn,
                     method.Locations.FirstOrDefault(),
                     method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));
@@ -54,7 +54,7 @@ internal sealed class ReturnTypeParser
         if (!isAsync)
         {
             _diagnostics.Add(
-                Diagnostic.Create(
+                DiagnosticInfo.Create(
                     Diagnostics.NonAsyncReturn,
                     method.Locations.FirstOrDefault(),
                     method.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));

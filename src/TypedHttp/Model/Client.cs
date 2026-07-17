@@ -1,5 +1,3 @@
-using Microsoft.CodeAnalysis;
-
 namespace TypedHttp.Model;
 
 /// <summary>
@@ -23,7 +21,7 @@ internal sealed record Client(
     string                          Interface,
     ImmutableByValArray<Header>     Headers,
     ImmutableByValArray<Request>    Requests,
-    ImmutableByValArray<Diagnostic> Diagnostics)
+    ImmutableByValArray<DiagnosticInfo> Diagnostics)
 {
     public string Name { get; } = Interface.Substring(1);
 }
