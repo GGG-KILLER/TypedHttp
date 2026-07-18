@@ -33,7 +33,7 @@ namespace TypedHttp.Sample
             var ___route = "users";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
             {
-                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();
@@ -60,7 +60,7 @@ namespace TypedHttp.Sample
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
             {
-                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();
@@ -87,7 +87,7 @@ namespace TypedHttp.Sample
             var ___route = "users";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route))
             {
-                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 global::System.Net.Http.HttpContent ___httpContent;
                 if (this.___jsonContext is not null)
                 {
@@ -127,7 +127,7 @@ namespace TypedHttp.Sample
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Put, ___route))
             {
-                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 global::System.Net.Http.HttpContent ___httpContent;
                 if (this.___jsonContext is not null)
                 {
@@ -153,7 +153,7 @@ namespace TypedHttp.Sample
             var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
             using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Delete, ___route))
             {
-                ___request.Headers.Add("Authorization", $"Bearer {token}");
+                ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                 using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                 {
                     ___response.EnsureSuccessStatusCode();

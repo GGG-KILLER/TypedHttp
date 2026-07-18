@@ -62,7 +62,11 @@ public class GetTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }

@@ -97,7 +97,7 @@ internal sealed class ClientParser
                 _diagnostics.Add(
                     DiagnosticInfo.Create(
                         Diagnostics.NonPartialParent,
-                        currentType.GetLocation(),
+                        currentType.Identifier.GetLocation(),
                         containingTypeSymbol!.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)));
             }
 

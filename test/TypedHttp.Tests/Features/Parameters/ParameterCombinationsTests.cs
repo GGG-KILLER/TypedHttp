@@ -65,7 +65,11 @@ public class ParameterCombinationsTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -133,7 +137,7 @@ public class ParameterCombinationsTests : TestBase
                           var ___route = $"users/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route))
                           {
-                              ___request.Headers.Add("X-Request-Id", $"{requestId}");
+                              ___request.Headers.TryAddWithoutValidation("X-Request-Id", $"{requestId}");
                               global::System.Net.Http.HttpContent ___httpContent;
                               if (this.___jsonContext is not null)
                               {

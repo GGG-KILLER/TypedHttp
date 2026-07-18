@@ -65,8 +65,8 @@ public class FileClientTests : TestBase
                           var ___route = $"buckets/{(global::System.Web.HttpUtility.UrlPathEncode(bucketId.ToString()))}/files";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Post, ___route))
                           {
-                              ___request.Headers.Add("Authorization", $"Bearer {token}");
-                              ___request.Headers.Add("X-Filename", $"{filename}");
+                              ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
+                              ___request.Headers.TryAddWithoutValidation("X-Filename", $"{filename}");
                               global::System.Net.Http.HttpContent ___httpContent;
                               using (___httpContent = new global::System.Net.Http.StreamContent(data))
                               {
@@ -74,7 +74,11 @@ public class FileClientTests : TestBase
                                   using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                                   {
                                       ___response.EnsureSuccessStatusCode();
+                                      #if NET5_0_OR_GREATER
                                       return await ___response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                                      #else
+                                      return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                      #endif
                                   }
                               }
                           }
@@ -87,7 +91,11 @@ public class FileClientTests : TestBase
                           {
                               var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false);
                               ___response.EnsureSuccessStatusCode();
+                              #if NET5_0_OR_GREATER
                               return await ___response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+                              #else
+                              return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                              #endif
                           }
                       }
                   }

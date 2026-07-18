@@ -108,10 +108,7 @@ internal static class Diagnostics
         customTags: [ WellKnownDiagnosticTags.NotConfigurable ]);
 
     // TODO: │ID          │Fixes│Condition                                                 │Severity → behavior        │
-    // TODO: │TYPEDHTTP006│1.1  │conflicting parameter attributes ([Body]+[Authorize] etc.)│Error → skip method        │
-    // TODO: │TYPEDHTTP007│3.1  │multiple [Body] parameters                                │Error → skip method        │
     // TODO: │TYPEDHTTP009│3.2  │interface name lacks I prefix                             │Error → skip client        │
-    // TODO: │TYPEDHTTP011│3.4  │[Query] on a route-bound parameter                        │Warning → attribute ignored│
     // TODO: │TYPEDHTTP012│9.5  │file-local [Client] interface                             │Error → skip client        │
 
     public static DiagnosticInfo ForMalformedRoute(Location? location, string name, TemplateError error)

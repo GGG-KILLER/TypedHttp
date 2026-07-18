@@ -1,4 +1,3 @@
-using System;
 using TypedHttp.Model;
 using Xunit;
 
@@ -11,9 +10,11 @@ public class HeaderTests
     {
         const string input = "Authorization: Bearer {token}";
 
-        var header = Header.Parse(input);
+        var result = Header.Parse(input);
 
-        var name = Assert.Single(header.Name.Parts);
+        Assert.True(result.IsOk);
+        var header = result.Ok.Value;
+        var name   = Assert.Single(header.Name.Parts.Array);
         Assert.Equal("Authorization",            name.Value);
         Assert.Equal(2,                          header.Value.Parts.Count);
         Assert.Equal(TemplatePartKind.String,    header.Value.Parts[0].Kind);
@@ -23,11 +24,14 @@ public class HeaderTests
     }
 
     [Fact]
-    public void Parse_HeaderWithoutColon_ThrowsFormatException()
+    public void Parse_HeaderWithoutColon_ReturnsError()
     {
         const string input = "InvalidHeader";
 
-        Assert.Throws<FormatException>(() => Header.Parse(input));
+        var result = Header.Parse(input);
+
+        Assert.True(result.IsErr);
+        Assert.Equal(HeaderError.HeaderHasNoColon, result.Err.Value);
     }
 
     [Fact]
@@ -35,9 +39,11 @@ public class HeaderTests
     {
         const string input = "Content-Type:";
 
-        var header = Header.Parse(input);
+        var result = Header.Parse(input);
 
-        var name = Assert.Single(header.Name.Parts.Array);
+        Assert.True(result.IsOk);
+        var header = result.Ok.Value;
+        var name   = Assert.Single(header.Name.Parts.Array);
         Assert.Equal("Content-Type", name.Value);
         Assert.Empty(header.Value.Parts.Array);
     }

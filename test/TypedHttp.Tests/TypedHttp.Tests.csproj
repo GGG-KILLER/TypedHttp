@@ -21,6 +21,15 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="xunit.v3"/>
+
+        <!--
+            The generator runs in-process in these snapshot tests via a normal ProjectReference, so
+            its runtime dependencies must be in this project's deps.json. TypedHttp marks them
+            PrivateAssets=all (they are forwarded as analyzer files for real consumers), so reference
+            them directly here or the generator throws FileNotFoundException before emitting anything.
+        -->
+        <PackageReference Include="Tsu"/>
+        <PackageReference Include="Microsoft.Bcl.HashCode"/>
     </ItemGroup>
 
     <ItemGroup>

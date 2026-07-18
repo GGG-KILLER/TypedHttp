@@ -63,7 +63,11 @@ public class CancellationTokenTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -133,7 +137,11 @@ public class CancellationTokenTests : TestBase
                               using (var ___response = await this.___httpClient.SendAsync(___request, cancellationToken).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }

@@ -1,4 +1,3 @@
-using System;
 using TypedHttp.Model;
 using Xunit;
 
@@ -9,10 +8,10 @@ public class TemplateTests
     [Fact]
     public void Parse_StringOnly_ReturnsStringPart()
     {
-        var input = "hello world";
+        var result = Template.Parse("hello world");
 
-        var template = Template.Parse(input);
-
+        Assert.True(result.IsOk);
+        var template = result.Ok.Value;
         Assert.Single(template.Parts.Array);
         Assert.Equal(TemplatePartKind.String, template.Parts[0].Kind);
         Assert.Equal("hello world",           template.Parts[0].Value);
@@ -21,10 +20,10 @@ public class TemplateTests
     [Fact]
     public void Parse_ParameterOnly_ReturnsParameterPart()
     {
-        var input = "{param}";
+        var result = Template.Parse("{param}");
 
-        var template = Template.Parse(input);
-
+        Assert.True(result.IsOk);
+        var template = result.Ok.Value;
         Assert.Single(template.Parts.Array);
         Assert.Equal(TemplatePartKind.Parameter, template.Parts[0].Kind);
         Assert.Equal("param",                    template.Parts[0].Value);
@@ -33,10 +32,10 @@ public class TemplateTests
     [Fact]
     public void Parse_MixedStringAndParameter_ReturnsMultipleParts()
     {
-        var input = "api/{id}/users";
+        var result = Template.Parse("api/{id}/users");
 
-        var template = Template.Parse(input);
-
+        Assert.True(result.IsOk);
+        var template = result.Ok.Value;
         Assert.Equal(3,                          template.Parts.Count);
         Assert.Equal(TemplatePartKind.String,    template.Parts[0].Kind);
         Assert.Equal("api/",                     template.Parts[0].Value);
@@ -50,11 +49,11 @@ public class TemplateTests
     public void Parse_EscapedDoubleBrace_AppendsLiteralDoubleBrace()
     {
         // {{ is kept verbatim so it can be used in C# interpolated strings (where {{ → {)
-        var input = "{{escaped}}";
+        var result = Template.Parse("{{escaped}}");
 
-        var template = Template.Parse(input);
-
-        var str = Assert.Single(template.Parts.Array);
+        Assert.True(result.IsOk);
+        var template = result.Ok.Value;
+        var str      = Assert.Single(template.Parts.Array);
         Assert.Equal(TemplatePartKind.String, str.Kind);
         Assert.Equal("{{escaped}}",           str.Value);
     }
@@ -62,10 +61,10 @@ public class TemplateTests
     [Fact]
     public void Parse_EscapedDoubleBrace_MixedWithParameter()
     {
-        var input = "{{prefix}}{id}suffix";
+        var result = Template.Parse("{{prefix}}{id}suffix");
 
-        var template = Template.Parse(input);
-
+        Assert.True(result.IsOk);
+        var template = result.Ok.Value;
         Assert.Equal(3,                          template.Parts.Count);
         Assert.Equal(TemplatePartKind.String,    template.Parts[0].Kind);
         Assert.Equal("{{prefix}}",               template.Parts[0].Value);
@@ -76,23 +75,21 @@ public class TemplateTests
     }
 
     [Fact]
-    public void Parse_TrailingOpenBrace_Throws()
+    public void Parse_TrailingOpenBrace_ReturnsError()
     {
-        Assert.Throws<FormatException>(() => Template.Parse("hello{"));
+        var result = Template.Parse("hello{");
+
+        Assert.True(result.IsErr);
+        Assert.Equal(TemplateError.UnclosedBrace, result.Err.Value);
     }
 
     [Fact]
-    public void Parse_UnclosedParameter_Throws()
+    public void Parse_UnclosedParameter_ReturnsError()
     {
-        Assert.Throws<FormatException>(() => Template.Parse("{unclosed"));
-    }
+        var result = Template.Parse("{unclosed");
 
-    [Fact]
-    public void Parse_UnclosedBrace_ThrowsWithCorrectMessage()
-    {
-        var ex = Assert.Throws<FormatException>(() => Template.Parse("{unclosed"));
-
-        Assert.Equal("Unclosed { in template string.", ex.Message);
+        Assert.True(result.IsErr);
+        Assert.Equal(TemplateError.UnclosedBrace, result.Err.Value);
     }
 
     [Fact]

@@ -20,6 +20,34 @@ public class TestBase
         (string filename, string content) expectedOutput,
         bool                            referenceCommon = false)
     {
+        var test = CreateTest(inputSource, referenceCommon);
+        test.TestState.GeneratedSources.Add(
+            (typeof(HttpClientGenerator), expectedOutput.filename, expectedOutput.content));
+        return test.RunAsync(TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// Runs the generator against source that is expected to produce one or more diagnostics
+    /// (and therefore no client output). Diagnostic locations are declared inline with the
+    /// testing library's numbered <c>{|#N:span|}</c> markup and matched to the supplied
+    /// <see cref="DiagnosticResult"/>s via <see cref="DiagnosticResult.WithLocation(int)"/>, so
+    /// each diagnostic's id, severity, location <em>and</em> message arguments are verified. When
+    /// the generator reports any diagnostic it skips emission, so only the post-initialization
+    /// attribute sources are expected to be generated.
+    /// </summary>
+    protected static Task TestDiagnostics(
+        [StringSyntax("C#")] string inputSource,
+        params DiagnosticResult[]   expected)
+    {
+        var test = CreateTest(inputSource, referenceCommon: false);
+        test.TestState.ExpectedDiagnostics.AddRange(expected);
+        return test.RunAsync(TestContext.Current.CancellationToken);
+    }
+
+    private static CSharpSourceGeneratorTest<HttpClientGenerator, DefaultVerifier> CreateTest(
+        string inputSource,
+        bool   referenceCommon)
+    {
         var test = new CSharpSourceGeneratorTest<HttpClientGenerator, DefaultVerifier>();
 #if NET8_0
         test.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
@@ -52,9 +80,7 @@ public class TestBase
             (typeof(HttpClientGenerator), "RequestAttributes.cs", GetEmbeddedText("RequestAttributes.cs")));
         test.TestState.GeneratedSources.Add(
             (typeof(HttpClientGenerator), "ParameterAttributes.cs", GetEmbeddedText("ParameterAttributes.cs")));
-        test.TestState.GeneratedSources.Add(
-            (typeof(HttpClientGenerator), expectedOutput.filename, expectedOutput.content));
-        return test.RunAsync(TestContext.Current.CancellationToken);
+        return test;
     }
 
     private static string GetEmbeddedText(string path)

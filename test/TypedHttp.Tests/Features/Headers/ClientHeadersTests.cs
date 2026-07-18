@@ -60,11 +60,15 @@ public class ClientHeadersTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Api-Key", "my-key");
+                              ___request.Headers.TryAddWithoutValidation("X-Api-Key", "my-key");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -131,12 +135,16 @@ public class ClientHeadersTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Api-Key", "my-key");
-                              ___request.Headers.Add("X-Tenant", "tenant1");
+                              ___request.Headers.TryAddWithoutValidation("X-Api-Key", "my-key");
+                              ___request.Headers.TryAddWithoutValidation("X-Tenant", "tenant1");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -206,11 +214,15 @@ public class ClientHeadersTests : TestBase
                           var ___route = "a";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Api-Key", "my-key");
+                              ___request.Headers.TryAddWithoutValidation("X-Api-Key", "my-key");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -220,11 +232,15 @@ public class ClientHeadersTests : TestBase
                           var ___route = "b";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Api-Key", "my-key");
+                              ___request.Headers.TryAddWithoutValidation("X-Api-Key", "my-key");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }

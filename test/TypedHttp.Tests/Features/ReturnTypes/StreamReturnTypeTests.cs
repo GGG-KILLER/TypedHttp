@@ -62,7 +62,11 @@ public class StreamReturnTypeTests : TestBase
                           {
                               var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false);
                               ___response.EnsureSuccessStatusCode();
+                              #if NET5_0_OR_GREATER
                               return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                              #else
+                              return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                              #endif
                           }
                       }
                   }
@@ -130,7 +134,11 @@ public class StreamReturnTypeTests : TestBase
                           {
                               var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false);
                               ___response.EnsureSuccessStatusCode();
+                              #if NET5_0_OR_GREATER
                               return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                              #else
+                              return await ___response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                              #endif
                           }
                       }
                   }
