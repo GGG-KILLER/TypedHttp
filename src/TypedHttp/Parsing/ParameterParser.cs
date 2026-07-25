@@ -28,6 +28,9 @@ internal sealed class ParameterParser
         ref string?                              cancellationTokenParam,
         CancellationToken                        cancellationToken = default)
     {
+        var isNullable = parameter.Type.IsReferenceType
+                      || parameter.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+
         if (SymbolEqualityComparer.Default.Equals(parameter.Type, _knownSymbols.CancellationToken))
         {
             cancellationTokenParam = parameter.Name;
@@ -45,7 +48,7 @@ internal sealed class ParameterParser
             {
                 isUsed = true;
                 queryParameters.Add(
-                    new AliasedParameter(parameter.Name, (string)attribute.ConstructorArguments[0].Value!));
+                    new AliasedParameter(parameter.Name, (string)attribute.ConstructorArguments[0].Value!, isNullable));
             }
 
             // [Authorize]
@@ -102,7 +105,7 @@ internal sealed class ParameterParser
                 {
                     propertyName = (string)attribute.ConstructorArguments[0].Value!;
                 }
-                properties.Add(new AliasedParameter(parameter.Name, propertyName));
+                properties.Add(new AliasedParameter(parameter.Name, propertyName, isNullable));
             }
 
             // [Body]
@@ -131,13 +134,12 @@ internal sealed class ParameterParser
         // If a parameter is unused, we simply forward it as a query parameter.
         if (!isUsed)
         {
-            queryParameters.Add(new AliasedParameter(parameter.Name, parameter.Name));
+            queryParameters.Add(new AliasedParameter(parameter.Name, parameter.Name, isNullable));
         }
 
     end:
         return new Parameter(
-            IsNullable: parameter.Type.IsReferenceType
-                     || parameter.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T,
+            IsNullable: isNullable,
             Type: parameter.Type.ToDisplayString(Sdf.FullTypeFormat),
             Name: parameter.Name);
     }

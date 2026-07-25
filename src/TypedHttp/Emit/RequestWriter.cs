@@ -46,17 +46,20 @@ internal sealed class RequestWriter(IndentedTextWriter writer)
 
                 WriteHeaders(request.Headers.Array, cancellationToken);
 
-                // Request headers override client headers with the same (case-insensitive)
-                // name, so skip any client header the request already sets.
-                var requestHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var header in request.Headers.Array)
-                    if (TryGetLiteralName(header.Name) is { } name)
-                        requestHeaderNames.Add(name);
+                if (clientHeaders.Length > 0)
+                {
+                    // Request headers override client headers with the same (case-insensitive)
+                    // name, so skip any client header the request already sets.
+                    var requestHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var header in request.Headers.Array)
+                        if (TryGetLiteralName(header.Name) is { } name)
+                            requestHeaderNames.Add(name);
 
-                WriteHeaders(
-                    ((IEnumerable<Header>)clientHeaders).Where(
-                        h => TryGetLiteralName(h.Name) is not { } n || !requestHeaderNames.Contains(n)),
-                    cancellationToken);
+                    WriteHeaders(
+                        ((IEnumerable<Header>)clientHeaders).Where(
+                            h => TryGetLiteralName(h.Name) is not { } n || !requestHeaderNames.Contains(n)),
+                        cancellationToken);
+                }
 
                 using (WriteRequestBody(request.Body))
                 {
@@ -129,9 +132,8 @@ internal sealed class RequestWriter(IndentedTextWriter writer)
         foreach (var query in request.QueryParameters)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var parameter = request.Parameters.Single(p => string.Equals(p.Name, query.Name, StringComparison.Ordinal));
 
-            if (parameter.IsNullable) writer.Write($"if ({query.Name} is not null) ");
+            if (query.IsNullable) writer.Write($"if ({query.Name} is not null) ");
 
             writer.Write($"{Names.RouteBuilderVar}.Append(");
             TemplateWriter.WriteTemplate(
