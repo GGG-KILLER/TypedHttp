@@ -35,7 +35,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
       - name: Package Libraries
         run: |
-          dotnet pack src/TypedHttp/ \
+          dotnet pack \
             --configuration Release \
             --output ./packages \
             --include-symbols
