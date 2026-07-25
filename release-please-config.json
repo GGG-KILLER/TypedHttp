@@ -21,6 +21,11 @@
           "xpath": "//Project/PropertyGroup/Version"
         },
         {
+          "type": "xml",
+          "path": "src/TypedHttp.Common/TypedHttp.Common.csproj",
+          "xpath": "//Project/PropertyGroup/Version"
+        },
+        {
           "type": "generic",
           "path": "src/TypedHttp/ThisVersion.cs"
         },
