@@ -41,7 +41,7 @@ internal static class Diagnostics
         "TypedHttp",
         DiagnosticSeverity.Error,
         true,
-        "All headers should have well-formed header names and values, separated by a semicolon.",
+        "All headers should have well-formed header names and values, separated by a colon.",
         customTags: [ WellKnownDiagnosticTags.NotConfigurable ]);
 
     /// <summary>
