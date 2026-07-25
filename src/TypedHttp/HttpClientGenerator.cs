@@ -65,7 +65,7 @@ public class HttpClientGenerator : IIncrementalGenerator
         new ClientWriter(indentedTextWriter).WriteClient(client, ctx.CancellationToken);
 
         ctx.AddSource(
-            $"{client.Name}.Generated.cs",
+            $"{client.Identifier}.Generated.cs",
             SourceText.From(stringWriter.ToString(), Encoding.UTF8));
     }
 

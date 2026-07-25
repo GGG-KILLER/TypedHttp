@@ -116,6 +116,7 @@ internal sealed class RequestParser
 
         return new Request(
             Name: GetMethodName(method),
+            ConstraintClauses: TypeParameterConstraints.Build(method.TypeParameters),
             Method: httpMethod,
             Headers: headers.DrainToImmutable().ByVal(),
             Route: route,

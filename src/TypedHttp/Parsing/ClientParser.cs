@@ -37,6 +37,7 @@ internal sealed class ClientParser
 
         var requests      = ImmutableArray.CreateBuilder<Request>();
         var typeSymbol    = (INamedTypeSymbol)_targetSymbol;
+        var constraints   = TypeParameterConstraints.Build(typeSymbol.TypeParameters);
         var requestParser = new RequestParser(_knownSymbols, _diagnostics);
         foreach (var method in typeSymbol.GetMembers().OfType<IMethodSymbol>())
         {
@@ -48,6 +49,7 @@ internal sealed class ClientParser
             Containers: scopes,
             Modifiers: interfaceModifiers,
             Interface: interfaceName,
+            ConstraintClauses: constraints,
             Headers: headers,
             Requests: requests.DrainToImmutable().ByVal(),
             Diagnostics: _diagnostics.DrainToImmutable().ByVal());

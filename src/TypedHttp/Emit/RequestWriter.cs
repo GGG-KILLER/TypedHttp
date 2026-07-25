@@ -26,7 +26,8 @@ internal sealed class RequestWriter(IndentedTextWriter writer)
 
             writer.Write($"{parameter.Type} {parameter.Name}");
         }
-        writer.WriteLine(')');
+        writer.Write(')');
+        writer.WriteLine(request.ConstraintClauses);
 
         using (writer.Block( /* empty because we write the function header above */))
         {
