@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace TypedHttp.Tests.Features.Parameters;
+namespace TypedHttp.Tests.Features.Generics;
 
-public class QueryParametersTests : TestBase
+public class GenericConstraintTests : TestBase
 {
     [Fact]
-    public async Task Generator_GeneratesStringQueryParameterCorrectly()
+    public async Task Generator_EmitsMethodTypeParameterConstraints()
     {
         var source = CSharp(
             """
@@ -18,8 +18,8 @@ public class QueryParametersTests : TestBase
             [Client]
             public interface ICustomClient
             {
-                [Get("search")]
-                Task<string> Search(string query);
+                [Get("items/{id}")]
+                Task<T> Get<T>(string id) where T : class, new();
             }
             """);
         var expectedOutput = CSharp(
@@ -54,22 +54,28 @@ public class QueryParametersTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.Task<string> Search(string query)
+                      public async global::System.Threading.Tasks.Task<T> Get<T>(string id) where T : class, new()
                       {
-                          var ___routeBuilder = new global::System.Text.StringBuilder("search");
-                          ___routeBuilder.Append('?');
-                          if (query is not null) ___routeBuilder.Append($"query={(global::System.Web.HttpUtility.UrlEncode(query.ToString()))}&");
-                          var ___route = ___routeBuilder.ToString(0, ___routeBuilder.Length - 1);
+                          var ___route = $"items/{(global::System.Web.HttpUtility.UrlPathEncode(id.ToString()))}";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
-                                  #if NET5_0_OR_GREATER
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #else
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #endif
+                                  T ___deserializedJson;
+                                  if (this.___jsonContext is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>) this.___jsonContext.GetTypeInfo(typeof(T))).ConfigureAwait(false);
+                                  }
+                                  else if (this.___jsonOptions is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>(this.___jsonOptions).ConfigureAwait(false);
+                                  }
+                                  else
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
+                                  }
+                                  return ___deserializedJson;
                               }
                           }
                       }
@@ -81,13 +87,18 @@ public class QueryParametersTests : TestBase
         await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
     }
 
+    // Type constraints (as opposed to keyword constraints like class/new()) must be fully
+    // global::-qualified: the generated file does not carry the source file's usings, so an
+    // unqualified `IEnumerable<int>` (imported via `using System.Collections.Generic;` in the
+    // source) would not resolve.
     [Fact]
-    public async Task Generator_GeneratesNonStringQueryParameterCorrectly()
+    public async Task Generator_EmitsGloballyQualifiedTypeConstraints()
     {
         var source = CSharp(
             """
             using TypedHttp;
             using System.Threading.Tasks;
+            using System.Collections.Generic;
 
             namespace X;
 
@@ -95,7 +106,7 @@ public class QueryParametersTests : TestBase
             public interface ICustomClient
             {
                 [Get("items")]
-                Task<string> GetItems(int page, int limit);
+                Task<T> Get<T>() where T : IEnumerable<int>, System.IComparable<T>;
             }
             """);
         var expectedOutput = CSharp(
@@ -130,23 +141,28 @@ public class QueryParametersTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.Task<string> GetItems(int page, int limit)
+                      public async global::System.Threading.Tasks.Task<T> Get<T>() where T : global::System.Collections.Generic.IEnumerable<int>, global::System.IComparable<T>
                       {
-                          var ___routeBuilder = new global::System.Text.StringBuilder("items");
-                          ___routeBuilder.Append('?');
-                          ___routeBuilder.Append($"page={(global::System.Web.HttpUtility.UrlEncode(page.ToString()))}&");
-                          ___routeBuilder.Append($"limit={(global::System.Web.HttpUtility.UrlEncode(limit.ToString()))}&");
-                          var ___route = ___routeBuilder.ToString(0, ___routeBuilder.Length - 1);
+                          var ___route = "items";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
-                                  #if NET5_0_OR_GREATER
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #else
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #endif
+                                  T ___deserializedJson;
+                                  if (this.___jsonContext is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>) this.___jsonContext.GetTypeInfo(typeof(T))).ConfigureAwait(false);
+                                  }
+                                  else if (this.___jsonOptions is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>(this.___jsonOptions).ConfigureAwait(false);
+                                  }
+                                  else
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
+                                  }
+                                  return ___deserializedJson;
                               }
                           }
                       }
@@ -159,7 +175,7 @@ public class QueryParametersTests : TestBase
     }
 
     [Fact]
-    public async Task Generator_GeneratesQueryParameterWithExplicitNameCorrectly()
+    public async Task Generator_EmitsInterfaceTypeParameterConstraintsAndBareConstructorNames()
     {
         var source = CSharp(
             """
@@ -169,10 +185,10 @@ public class QueryParametersTests : TestBase
             namespace X;
 
             [Client]
-            public interface ICustomClient
+            public interface ICustomClient<T> where T : class, new()
             {
-                [Get("search")]
-                Task<string> Search([Query("q")] string keyword);
+                [Get("items")]
+                Task<T> GetAll();
             }
             """);
         var expectedOutput = CSharp(
@@ -184,7 +200,7 @@ public class QueryParametersTests : TestBase
               {
                   // Generated by TypedHttp {{ThisVersion.Version}} released on {{ThisVersion.ReleaseDate}}
                   [global::System.CodeDom.Compiler.GeneratedCode("TypedHttp", "{{ThisVersion.Version}}")]
-                  public sealed class CustomClient : ICustomClient
+                  public sealed class CustomClient<T> : ICustomClient<T> where T : class, new()
                   {
                       private readonly global::System.Net.Http.HttpClient ___httpClient;
                       private readonly global::System.Text.Json.JsonSerializerOptions ___jsonOptions;
@@ -207,22 +223,28 @@ public class QueryParametersTests : TestBase
                           this.___jsonContext = jsonContext;
                       }
 
-                      public async global::System.Threading.Tasks.Task<string> Search(string keyword)
+                      public async global::System.Threading.Tasks.Task<T> GetAll()
                       {
-                          var ___routeBuilder = new global::System.Text.StringBuilder("search");
-                          ___routeBuilder.Append('?');
-                          if (keyword is not null) ___routeBuilder.Append($"q={(global::System.Web.HttpUtility.UrlEncode(keyword.ToString()))}&");
-                          var ___route = ___routeBuilder.ToString(0, ___routeBuilder.Length - 1);
+                          var ___route = "items";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
-                                  #if NET5_0_OR_GREATER
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #else
-                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                  #endif
+                                  T ___deserializedJson;
+                                  if (this.___jsonContext is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>((global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>) this.___jsonContext.GetTypeInfo(typeof(T))).ConfigureAwait(false);
+                                  }
+                                  else if (this.___jsonOptions is not null)
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>(this.___jsonOptions).ConfigureAwait(false);
+                                  }
+                                  else
+                                  {
+                                      ___deserializedJson = await ___response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
+                                  }
+                                  return ___deserializedJson;
                               }
                           }
                       }

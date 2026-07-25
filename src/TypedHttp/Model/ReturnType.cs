@@ -1,67 +1,54 @@
 namespace TypedHttp.Model;
 
-/// <summary>
-/// Represents a <see cref="Request"/>'s return type.
-/// </summary>
-/// <param name="Kind">The kind of return type this is.</param>
-/// <param name="Type">The return type's fully qualified name.</param>
-/// <param name="InnerType">
-/// The inner (T in Task&lt;T&gt;) return type's fully qualified name.
-/// </param>
-/// <param name="InnerInnerType">
-/// The inner inner (T in Task&lt;Response&lt;T&gt;&gt;) return type's fully qualified name.
-/// </param>
-internal sealed record ReturnType(
-    ReturnTypeKind Kind,
-    string         Type,
-    string?        InnerType,
-    string?        InnerInnerType)
+internal abstract record ReturnType(string FullType)
 {
-    public bool NeedsUndisposedResponse => Kind is ReturnTypeKind.HttpResponseMessage or ReturnTypeKind.Stream;
+    public virtual bool NeedsUndisposedResponse => false;
 }
 
 /// <summary>
-/// The kind of response that the user expects to receive from a request method.
+/// The raw response, user handles everything including status code checks
+/// and response disposal.
 /// </summary>
-internal enum ReturnTypeKind
+internal sealed record HttpResponseMessageReturnType(string FullType) : ReturnType(FullType)
 {
-    /// <summary>
-    /// The raw response, user handles everything including status code checks
-    /// and response disposal.
-    /// </summary>
-    HttpResponseMessage,
-
-    /// <summary>
-    /// Our own specialized Response type.
-    /// </summary>
-    Response,
-
-    /// <summary>
-    /// Our own specialized Response&lt;T&gt; type.
-    /// </summary>
-    ResponseOfT,
-
-    /// <summary>
-    /// Plain string contents. Ensure success status code, read as a string and
-    /// let the user handle it.
-    /// </summary>
-    String,
-
-    /// <summary>
-    /// Stream contents. Ensure success status code, read as stream and let the
-    /// user handle it.
-    /// </summary>
-    Stream,
-
-    /// <summary>
-    /// User does not care about the response body. Ensure success status code
-    /// and that's it.
-    /// </summary>
-    Void,
-
-    /// <summary>
-    /// Custom response kind. Ensure success status code and deserialize as
-    /// JSON.
-    /// </summary>
-    Custom,
+    /// <inheritdoc />
+    public override bool NeedsUndisposedResponse => true;
 }
+
+/// <summary>
+/// Our own specialized Response type.
+/// </summary>
+internal sealed record ResponseReturnType(string FullType) : ReturnType(FullType);
+
+/// <summary>
+/// Our own specialized Response&lt;T&gt; type.
+/// </summary>
+internal sealed record ResponseOfTReturnType(string FullType, string DeserializeType) : ReturnType(FullType);
+
+/// <summary>
+/// Plain string contents. Ensure success status code, read as a string and
+/// let the user handle it.
+/// </summary>
+internal sealed record StringReturnType(string FullType) : ReturnType(FullType);
+
+/// <summary>
+/// Stream contents. Ensure success status code, read as stream and let the
+/// user handle it.
+/// </summary>
+internal sealed record StreamReturnType(string FullType) : ReturnType(FullType)
+{
+    /// <inheritdoc />
+    public override bool NeedsUndisposedResponse => true;
+}
+
+/// <summary>
+/// User does not care about the response body. Ensure success status code
+/// and that's it.
+/// </summary>
+internal sealed record VoidReturnType(string FullType) : ReturnType(FullType);
+
+/// <summary>
+/// Custom response kind. Ensure success status code and deserialize as
+/// JSON.
+/// </summary>
+internal sealed record CustomReturnType(string FullType, string DeserializeType) : ReturnType(FullType);

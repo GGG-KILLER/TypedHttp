@@ -59,11 +59,15 @@ public class AuthorizeParameterTests : TestBase
                           var ___route = "profile";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("Authorization", $"Bearer {token}");
+                              ___request.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -129,11 +133,15 @@ public class AuthorizeParameterTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("Authorization", $"ApiKey {key}");
+                              ___request.Headers.TryAddWithoutValidation("Authorization", $"ApiKey {key}");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }

@@ -1,4 +1,4 @@
-namespace TypedHttp.IO;
+namespace TypedHttp.Emit;
 
 internal static class Names
 {

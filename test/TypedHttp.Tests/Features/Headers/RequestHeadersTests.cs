@@ -60,11 +60,15 @@ public class RequestHeadersTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Custom", "value");
+                              ___request.Headers.TryAddWithoutValidation("X-Custom", "value");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -132,12 +136,16 @@ public class RequestHeadersTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-First", "value1");
-                              ___request.Headers.Add("X-Second", "value2");
+                              ___request.Headers.TryAddWithoutValidation("X-First", "value1");
+                              ___request.Headers.TryAddWithoutValidation("X-Second", "value2");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }

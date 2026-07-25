@@ -1,5 +1,3 @@
-using Microsoft.CodeAnalysis;
-
 namespace TypedHttp.Model;
 
 /// <summary>
@@ -20,7 +18,27 @@ namespace TypedHttp.Model;
 internal sealed record Client(
     ImmutableByValArray<string>     Containers,
     string                          Modifiers,
-    string                          Name,
+    string                          Interface,
+    string                          ConstraintClauses,
     ImmutableByValArray<Header>     Headers,
     ImmutableByValArray<Request>    Requests,
-    ImmutableByValArray<Diagnostic> Diagnostics);
+    ImmutableByValArray<DiagnosticInfo> Diagnostics)
+{
+    /// <summary>
+    /// The generated class name as it appears in the declaration, including any generic type
+    /// parameter list (e.g. <c>CrudClient</c> or <c>GenericClient&lt;T&gt;</c>).
+    /// </summary>
+    public string Name { get; } = Interface.Substring(1);
+
+    /// <summary>
+    /// The bare class identifier without any type parameter list, for use where type parameters
+    /// are illegal: constructor names and the generated file's hint name.
+    /// </summary>
+    public string Identifier { get; } = StripTypeParameters(Interface.Substring(1));
+
+    private static string StripTypeParameters(string name)
+    {
+        var index = name.IndexOf('<');
+        return index < 0 ? name : name.Substring(0, index);
+    }
+}

@@ -34,20 +34,35 @@ The generator is a pipeline; follow it in this order when tracing behavior:
    `RegisterPostInitializationOutput` it emits the attribute definitions (see below), then
    uses `ForAttributeWithMetadataName(MetadataNames.Client, ...)` to find `[Client]` interfaces.
 
-2. **Parser** (`HttpClientGenerator.Parser.*.cs`, split by concern:
-   `.Client`, `.Request`, `.Parameter`) — turns each interface's `SemanticModel` into an
-   immutable **Model**.
+2. **Parser** (`Parsing/*.cs`: `ClientParser` drives `RequestParser`, which drives
+   `ParameterParser` and `ReturnTypeParser`) — turns each interface's `SemanticModel` into an
+   immutable **Model**. `KnownSymbols` caches the `INamedTypeSymbol`s the parsers compare against
+   (the emitted attributes, `Task`/`ValueTask`, `Stream`, `HttpContent`, and the optional
+   `TypedHttp.Response`/`Response<T>`). Parsing never throws for user errors: `Header.Parse` /
+   `Template.Parse` return Tsu `Result<T, TErr>`, and each failure is collected as a
+   `DiagnosticInfo` on the model instead of aborting.
 
-3. **Model** (`Model/*.cs`: `Client`, `Request`, `Parameter`, `Header`, `Template`,
-   `ReturnType`, `KnownSymbols`) — value-equatable data carriers. Correct equality here is
-   critical for incremental-generator caching; `ImmutableByValArray`/`ImmutableByValDictionary`
-   exist specifically to give collections structural equality (never use raw
-   `ImmutableArray<T>` in a model field, or caching breaks).
+3. **Model** (`Model/*.cs`: `Client`, `Request`, `Parameter`/`AliasedParameter`, `Header`,
+   `Template`, `RequestBody`, `ReturnType`, `DiagnosticInfo`) — value-equatable data carriers.
+   Correct equality here is critical for incremental-generator caching: use `ImmutableByValArray`
+   (never a raw `ImmutableArray<T>`) for collection fields so they compare structurally, and store
+   diagnostics as `DiagnosticInfo` — a syntax-tree-free, value-equatable stand-in for `Diagnostic`
+   so the cached model doesn't root a whole `SyntaxTree`; the real `Diagnostic` is rehydrated at
+   the `RegisterSourceOutput` stage. `ReturnType` is an abstract record hierarchy
+   (`VoidReturnType`, `StringReturnType`, `StreamReturnType`, `ResponseOfTReturnType`, …), matched
+   with pattern switches in the writer, not an enum + fields.
 
-4. **IO writers** (`IO/*.cs`) — `ClientWriter` drives `RequestWriter` over an
-   `IndentedTextWriter` to emit the source text. `Names.cs`/`Types.cs` hold the fully-qualified
-   type strings and generated field/local names (e.g. `___httpClient`). Generated code uses
-   `global::`-qualified names throughout and CRLF line endings.
+4. **Emit writers** (`Emit/*.cs`) — `ClientWriter` drives `RequestWriter` (and `TemplateWriter`
+   for route/header templates) over an `IndentedTextWriter`. Prefer the helpers in
+   `IndentedTextWriterExtensions`: `Block(...)` opens a `{`-delimited, auto-indented scope (dispose
+   to close it) and `SplitAndWriteLines` emits a multi-line raw string literal with each line
+   correctly indented — `IndentedTextWriter` only applies indentation at `WriteLine` boundaries,
+   not on newlines embedded inside a single `Write`. `Names`/`Types` hold the generated field/local
+   names (e.g. `___httpClient`) and fully-qualified type strings. Generated code is
+   `global::`-qualified throughout with CRLF line endings.
+
+When any `DiagnosticInfo` is present on the parsed `Client`, `ProcessClient` reports the
+diagnostics and emits **no** source for that client (see `HttpClientGenerator.ProcessClient`).
 
 Output file name is the interface name **minus the leading `I`** + `.Generated.cs`
 (e.g. `ICrudClient` → `CrudClient.Generated.cs`), matching the generated class name.
@@ -60,6 +75,21 @@ and shipped as `<EmbeddedResource>`s, then re-emitted into the *consumer's* comp
 post-init. When editing an attribute, edit the file under `Resources/` — the copy under
 `src/TypedHttp.Sample/Generated/` is generator output, not a source of truth.
 
+### The generator's runtime dependencies must be plumbed into every consumption path
+
+The generator uses **Tsu** (`Result<T, TErr>`) and **Microsoft.Bcl.HashCode** *at generation
+time*, both referenced `PrivateAssets=all`. They don't flow transitively, so every way the
+generator is consumed has to forward those DLLs explicitly — otherwise the generator throws
+`FileNotFoundException` and silently emits nothing:
+- **NuGet consumers** — the DLLs are packed under `analyzers/dotnet/cs` next to the generator
+  (`Content` items in `TypedHttp.csproj`).
+- **`OutputItemType="Analyzer"` ProjectReferences** (the sample, `TypedHttp.RuntimeIntegrationTests`)
+  — forwarded by the `GetGeneratorDependencyTargetPaths` target in `TypedHttp.csproj`.
+- **`test/TypedHttp.Tests`** — the generator runs in-process, so the DLLs must be in the test
+  project's `deps.json`; it therefore references Tsu / Microsoft.Bcl.HashCode directly.
+
+Adding a new generator dependency means updating all three.
+
 ## Two very different test projects
 
 - **`test/TypedHttp.Tests`** — generator *snapshot* tests. Each test feeds a source string to
@@ -68,7 +98,10 @@ post-init. When editing an attribute, edit the file under `Resources/` — the c
   match the generator byte-for-byte**, including CRLF line endings, `global::` prefixes, and the
   `ThisVersion` version/date stamped into the header — a formatting change in a writer means
   every affected expected block must be updated in lockstep. Organized by feature under
-  `Features/` (HttpMethods, Parameters, ReturnTypes, Headers, ...).
+  `Features/` (HttpMethods, Parameters, ReturnTypes, Headers, Diagnostics, ...). `TestBase`
+  exposes `TestGenerator` (assert emitted source) and `TestDiagnostics` (assert reported
+  diagnostics via `{|#N:span|}` markup bound to `DiagnosticResult`s — a client that produces a
+  diagnostic emits no source, so these assert id, location and message args instead of output).
 
 - **`test/TypedHttp.RuntimeIntegrationTests`** (net8.0) — *runtime* tests that actually execute
   generated clients against an in-process ASP.NET Core `MockApiServer`, referencing the

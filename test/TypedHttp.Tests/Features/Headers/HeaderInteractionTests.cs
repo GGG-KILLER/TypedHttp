@@ -61,12 +61,16 @@ public class HeaderInteractionTests : TestBase
                           var ___route = "data";
                           using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                           {
-                              ___request.Headers.Add("X-Client", "client-value");
-                              ___request.Headers.Add("X-Request", "request-value");
+                              ___request.Headers.TryAddWithoutValidation("X-Request", "request-value");
+                              ___request.Headers.TryAddWithoutValidation("X-Client", "client-value");
                               using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                               {
                                   ___response.EnsureSuccessStatusCode();
+                                  #if NET5_0_OR_GREATER
                                   return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #else
+                                  return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                  #endif
                               }
                           }
                       }
@@ -78,10 +82,6 @@ public class HeaderInteractionTests : TestBase
         await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
     }
 
-    // TODO: Re-enable this test once the generator properly handles header override logic
-    // Currently, when both client and request define the same header, both are added.
-    // The expected behavior is that request-level headers should override client-level headers.
-    /*
     [Fact]
     public async Task Generator_RequestHeaderOverridesClientHeaderCorrectly()
     {
@@ -138,10 +138,15 @@ public class HeaderInteractionTests : TestBase
                         var ___route = "data";
                         using (var ___request = new global::System.Net.Http.HttpRequestMessage(global::System.Net.Http.HttpMethod.Get, ___route))
                         {
-                            ___request.Headers.Add("X-Custom", "request-value");
+                            ___request.Headers.TryAddWithoutValidation("X-Custom", "request-value");
                             using (var ___response = await this.___httpClient.SendAsync(___request).ConfigureAwait(false))
                             {
+                                ___response.EnsureSuccessStatusCode();
+                                #if NET5_0_OR_GREATER
                                 return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                #else
+                                return await ___response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                #endif
                             }
                         }
                     }
@@ -152,5 +157,4 @@ public class HeaderInteractionTests : TestBase
 
         await TestGenerator(source, ("CustomClient.Generated.cs", expectedOutput));
     }
-    */
 }
