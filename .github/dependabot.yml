@@ -6,10 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: dotnet-sdk
-    directories:
-      - /src/TypedHttp/
-      - /src/TypedHttp.Common/
-      - /test/TypedHttp.Tests/
+    directory: /
     assignees:
       - GGG-KILLER
     commit-message:
