@@ -12,43 +12,36 @@ internal static class TemplateWriter
         Func<string, string>? interpolationTransform = null)
     {
         interpolationTransform ??= static x => x;
-        if (template.Parts.Length == 1)
+
+        // Fast path: a lone literal with no interpolation holes. Emit a plain string,
+        // un-doubling the escaped braces the parser kept doubled for the $"..." path below
+        // (otherwise "{{" would reach runtime literally instead of collapsing to "{").
+        if (template.Parts is [{ Kind: TemplatePartKind.String, Value: var literal }])
         {
-            if (template.Parts[0].Kind == TemplatePartKind.String)
+            writer.Write(
+                SymbolDisplay.FormatLiteral(
+                    literal.Replace("{{", "{").Replace("}}", "}"),
+                    quote: true));
+            return;
+        }
+
+        writer.Write("$\"");
+        foreach (var part in template.Parts)
+        {
+            if (part.Kind == TemplatePartKind.String)
             {
                 writer.Write(
                     SymbolDisplay.FormatLiteral(
-                        template.Parts[0].Value,
-                        quote: true));
+                        part.Value,
+                        quote: false));
             }
             else
             {
-                writer.Write("$\"{");
-                writer.Write(interpolationTransform(template.Parts[0].Value)!);
-                writer.Write("}\"");
+                writer.Write('{');
+                writer.Write(interpolationTransform(part.Value)!);
+                writer.Write('}');
             }
         }
-        else
-        {
-            writer.Write("$\"");
-            foreach (var part in template.Parts)
-            {
-                if (part.Kind == TemplatePartKind.String)
-                {
-                    writer.Write(
-                        SymbolDisplay.FormatLiteral(
-                            part.Value,
-                            quote: false));
-                }
-                else
-                {
-                    writer.Write('{');
-                    writer.Write(interpolationTransform(part.Value)!);
-                    writer.Write('}');
-                }
-            }
-
-            writer.Write('"');
-        }
+        writer.Write('"');
     }
 }
