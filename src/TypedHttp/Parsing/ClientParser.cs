@@ -125,7 +125,7 @@ internal sealed class ClientParser
             stringBuilder.Append("namespace ");
             stringBuilder.Append(
                 typeSymbol.ContainingNamespace.ToDisplayString(
-                    Sdf.FullTypeFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)));
+                    SymbolDisplayFormats.FullTypeFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)));
             builder.Add(stringBuilder.ToString());
         }
 

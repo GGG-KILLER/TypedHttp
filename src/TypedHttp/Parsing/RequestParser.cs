@@ -146,7 +146,7 @@ internal sealed class RequestParser
     }
 
     private static readonly SymbolDisplayFormat s_methodNameFormat =
-        Sdf.FullTypeFormat.WithMemberOptions(SymbolDisplayMemberOptions.None);
+        SymbolDisplayFormats.FullTypeFormat.WithMemberOptions(SymbolDisplayMemberOptions.None);
 
     private static string GetMethodName(IMethodSymbol method) => method.ToDisplayString(s_methodNameFormat);
 

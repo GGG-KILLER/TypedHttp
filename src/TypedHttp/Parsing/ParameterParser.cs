@@ -124,7 +124,7 @@ internal sealed class ParameterParser
                 else
                 {
                     body = new RequestBody(
-                        parameter.Type.ToDisplayString(Sdf.FullTypeFormat),
+                        parameter.Type.ToDisplayString(SymbolDisplayFormats.FullTypeFormat),
                         parameter.Name,
                         GetBodyKind(parameter.Type));
                 }
@@ -140,7 +140,7 @@ internal sealed class ParameterParser
     end:
         return new Parameter(
             IsNullable: isNullable,
-            Type: parameter.Type.ToDisplayString(Sdf.FullTypeFormat),
+            Type: parameter.Type.ToDisplayString(SymbolDisplayFormats.FullTypeFormat),
             Name: parameter.Name);
     }
 

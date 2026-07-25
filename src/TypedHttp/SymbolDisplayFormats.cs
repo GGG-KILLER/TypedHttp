@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace TypedHttp;
 
-internal static class Sdf
+internal static class SymbolDisplayFormats
 {
     public static readonly SymbolDisplayFormat FullTypeFormat = new(
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,

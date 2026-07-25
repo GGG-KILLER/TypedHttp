@@ -18,7 +18,7 @@ internal sealed class ReturnTypeParser
     public ReturnType Parse(IMethodSymbol method)
     {
         var returnType  = method.ReturnType;
-        var fullTypeStr = returnType.ToDisplayString(Sdf.FullTypeFormat);
+        var fullTypeStr = returnType.ToDisplayString(SymbolDisplayFormats.FullTypeFormat);
 
         // Check for void return type
         if (method.ReturnsVoid)
@@ -70,7 +70,7 @@ internal sealed class ReturnTypeParser
         if (returnType is INamedTypeSymbol { TypeArguments.Length: 1 } responseNamedType
          && SymbolEqualityComparer.Default.Equals(responseNamedType.OriginalDefinition, _knownSymbols.ResponseOfT))
         {
-            var innerTypeStr = responseNamedType.TypeArguments[0].ToDisplayString(Sdf.FullTypeFormat);
+            var innerTypeStr = responseNamedType.TypeArguments[0].ToDisplayString(SymbolDisplayFormats.FullTypeFormat);
             return new ResponseOfTReturnType(fullTypeStr, innerTypeStr);
         }
 
@@ -93,6 +93,6 @@ internal sealed class ReturnTypeParser
         }
 
         // If everything else fails, it's a type that needs deserializing
-        return new CustomReturnType(fullTypeStr, returnType.ToDisplayString(Sdf.FullTypeFormat));
+        return new CustomReturnType(fullTypeStr, returnType.ToDisplayString(SymbolDisplayFormats.FullTypeFormat));
     }
 }
